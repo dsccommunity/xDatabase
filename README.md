@@ -43,11 +43,11 @@ This property can take the following values: { 2008-R2 | 2012 | 2014 }
 
 ## Versions
 
-1.1.0.0
+### 1.1.0.0
 
 * Minor bug fixes
 
-1.0.0.0
+### 1.0.0.0
 
 * Initial release with the following resources 
     * xDatabase
