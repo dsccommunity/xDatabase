@@ -384,4 +384,3 @@ function Get-SqlServerMajoreVersion([string]$sqlServerVersion)
 Export-ModuleMember -Function *-TargetResource
 
 
-
