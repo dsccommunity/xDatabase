@@ -1,3 +1,5 @@
+version: 1.2.0.{build}
+
 install: 
     - cinst -y pester
     - git clone https://github.com/PowerShell/DscResource.Tests

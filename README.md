@@ -43,6 +43,10 @@ This property can take the following values: { 2008-R2 | 2012 | 2014 }
 
 ## Versions
 
+### 1.2.0.0
+
+* Improve support for Credentials.
+
 ### 1.1.0.0
 
 * Minor bug fixes
