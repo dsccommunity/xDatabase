@@ -1,4 +1,4 @@
-[![Build status](https://ci.appveyor.com/api/projects/status/oidqwkp7ljqoefd3/branch/master?svg=true)](https://ci.appveyor.com/project/PowerShell/xdatabase/branch/master)
+﻿[![Build status](https://ci.appveyor.com/api/projects/status/oidqwkp7ljqoefd3/branch/master?svg=true)](https://ci.appveyor.com/project/PowerShell/xdatabase/branch/master)
 
 # xDatabase
 
@@ -42,6 +42,12 @@ This property can take the following values: { 2008-R2 | 2012 | 2014 }
 
 
 ## Versions
+
+### 1.3.0.0
+
+* Fixed mandatory attributes in schema
+* Removed parameter DefaultDatabaseName
+* Alligned *.schema.mof with *.psm1 files
 
 ### 1.2.0.0
 
