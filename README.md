@@ -43,6 +43,10 @@ This property can take the following values: { 2008-R2 | 2012 | 2014 }
 
 ## Versions
 
+### 1.4.0.0
+
+* Error output improvements
+
 ### 1.3.0.0
 
 * Fixed mandatory attributes in schema
