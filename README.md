@@ -24,7 +24,7 @@ This property can take the following values: { 2008-R2 | 2012 | 2014 }
 * **BacPacPath**: The path to the .bacpac file to be used for database restore
 If this is used, the DacPacPath (see below) cannot be specified.
 * **DacPacPath**: The path to the .dacpac file to be used for database schema deploy.
-If this is used, the BacPacPath (see below) cannot be specified.
+If this is used, the BacPacPath (see above) cannot be specified.
 * **DacPacApplicationName**: For deploying a database using .dacpac file, an application name with which the dacpac is registered.
 This is needed to support database upgrade using .dacpac files.
 This must specified if DacPacPath is provided.
