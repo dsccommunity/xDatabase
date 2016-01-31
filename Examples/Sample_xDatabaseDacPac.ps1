@@ -39,7 +39,7 @@ configuration DacDeploy
 
         [string]$DacPacApplicationName,
 
-	[string]$PublishProfilePath
+        [string]$PublishProfilePath
 
     )
 
@@ -55,8 +55,8 @@ configuration DacDeploy
             DatabaseName = $DatabaseName
             Credentials = $Credentials
             DacPacPath =  $DacPacPath
-	    DacPacApplicationName = $DacPacApplicationName
-	    PublishProfilePath = $PublishProfilePath
+            DacPacApplicationName = $DacPacApplicationName
+            PublishProfilePath = $PublishProfilePath
         } 
     } 
 }
