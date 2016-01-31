@@ -1,4 +1,4 @@
-data LocalizedData
+ data LocalizedData
 {
     # culture="en-US"
     ConvertFrom-StringData @'
@@ -34,7 +34,11 @@ function Get-TargetResource
 
         [parameter(Mandatory = $true)]
         [System.String]
-        $DatabaseName
+        $DatabaseName,
+
+        [System.String]
+        $publishProfilePath
+
     )
 
         if($PSBoundParameters.ContainsKey('Credentials'))
@@ -93,8 +97,12 @@ function Set-TargetResource
         $DacPacApplicationName,
 
         [System.String]
-        $DacPacApplicationVersion
+        $DacPacApplicationVersion,
+        
+        [System.String]
+        $publishProfilePath
     )
+        
 
     if($PSBoundParameters.ContainsKey('Credentials'))
     {
@@ -104,7 +112,7 @@ function Set-TargetResource
     {
         $ConnectionString = Construct-ConnectionString -sqlServer $SqlServer
     }
-
+    
     if($Ensure -eq "Present")
     {
         if($PSBoundParameters.ContainsKey('BacPacPath'))
@@ -117,17 +125,25 @@ function Set-TargetResource
             {
                 Throw "Application Name Needed for DAC Registration, else upgrade is unsupported"
             }
-            DeployDac -databaseName $DatabaseName -connectionString $ConnectionString -sqlserverVersion $SqlServerVersion -dacpacPath $DacPacPath -dacpacApplicationName $DacPacApplicationName -dacpacApplicationVersion $DacPacApplicationVersion
+                
+            Write-Verbose "Deploying Database"
+            DeployDac -databaseName $DatabaseName -connectionString $ConnectionString -sqlserverVersion $SqlServerVersion -dacpacPath $DacPacPath -dacpacApplicationName $DacPacApplicationName -dacpacApplicationVersion $DacPacApplicationVersion -publishProfilePath $publishProfilePath
+            Write-Verbose "Deploying Database...Done"
+            
         }
         else
         {
+            Write-Verbose "Creating Database"
             CreateDb -databaseName $DatabaseName -connectionString $ConnectionString
         }
     }
     else
     {
+        Write-Verbose "Deleting Database"
         DeleteDb -databaseName $DatabaseName -connectionString $ConnectionString -sqlServerVersion $SqlServerVersion
     }
+
+    
 }
 
 function Test-TargetResource
@@ -166,7 +182,11 @@ function Test-TargetResource
         $DacPacApplicationName,
 
         [System.String]
-        $DacPacApplicationVersion
+        $DacPacApplicationVersion,
+
+        [System.String]
+        $publishProfilePath
+
     )
 
     if($PSBoundParameters.ContainsKey('DacPacPath') -and $PSBoundParameters.ContainsKey('BacPacPath'))
@@ -243,7 +263,7 @@ function CheckIfDbExists([string]$connectionString, [string]$databaseName)
     return $true
 }
 
-function DeployDac([string] $databaseName, [string]$connectionString, [string]$sqlserverVersion, [string]$dacpacPath, [string]$dacpacApplicationName, [string]$dacpacApplicationVersion)
+function DeployDac([string] $databaseName, [string]$connectionString, [string]$sqlserverVersion, [string]$dacpacPath, [string]$dacpacApplicationName, [string]$dacpacApplicationVersion, [string]$publishProfilePath)
 {
     $defaultDacPacApplicationVersion = "1.0.0.0"
 
@@ -252,33 +272,64 @@ function DeployDac([string] $databaseName, [string]$connectionString, [string]$s
         $defaultDacPacApplicationVersion = $defaultDacPacApplicationVersion
     }
 
+    Write-Verbose "DeployDac: Loading DacFx"
+
     Load-DacFx -sqlserverVersion $sqlserverVersion
 
-    $dacServicesObject = new-object Microsoft.SqlServer.Dac.DacServices ($connectionString)
+    Write-Verbose "DeployDac: Loading DacPac"
 
     try
-    {
-        $dacpacInstance = [Microsoft.SqlServer.Dac.DacPackage]::Load($dacpacPath)
+    {        
+        $dacpacInstance = Load-Dacpac $path
     }
     catch
     {
         Write-Verbose("Unable to load dacpac, error: $_")  
         return    
-    }
-    
+    }    
+
     try
     {
-        $dacServicesObject.Deploy($dacpacInstance, $databaseName,$true)        
-    }
-    catch
-    {
-        Write-Verbose("Dac Deploy Failed, error: $_")
-        return
-    }
+        if($PSBoundParameters.ContainsKey('PublishProfilePath') -and  $publishProfilePath -ne "")
+        {
+            if(!(Test-Path $publishProfilePath)){
+                Write-Verbose ("Dac Publish Profile in $publishProfilePath was not found, aborting")
+                return
+            }
+            
+            try
+            {
+                $dacProfile = Load-Profile $publishProfilePath
+                Write-Verbose ("Dac Publish using Profile in $publishProfilePath")
+            }
+            catch
+            {
+                Write-Verbose("Dac Publish Profile Failed, error: $_")
+                return        
+            }
+
+            Write-Verbose "DeployDac: Deploying DacPac with publish profile path"
+            
+            Deploy-Dacpac $connectionString $path $databaseName $true $publishProfilePath    
+            
+        }
+        else
+        {            
+            Write-Verbose "DeployDac: Deploying DacPac"
+
+            Deploy-Dacpac $connectionString $path $databaseName $true $null
+        }
+               
+   }
+   catch
+   {
+       Write-Verbose("Dac Deploy Failed, error: $_")
+       return
+   }
     
     try
     {        
-        $dacServicesObject.Register($databaseName, $dacpacApplicationName,$defaultDacPacApplicationVersion)
+        Register-Dacpac $connectionString $databaseName $dacpacApplicationName $defaultDacPacApplicationVersion
         Write-Verbose("Dac Deployed and Registered")    
     }
     catch
@@ -287,6 +338,52 @@ function DeployDac([string] $databaseName, [string]$connectionString, [string]$s
     }
     
 }
+
+
+function Get-DacServices([string]$connectionString){
+    
+    new-object Microsoft.SqlServer.Dac.DacServices ($connectionString)
+
+}
+
+function Get-DeployProfile([string]$sqlServerVersion, [string]$connectionString){
+    
+    new-object Microsoft.SqlServer.Dac.DacServices ($connectionString)
+}
+
+function Load-Dacpac([string] $path){
+    
+    [Microsoft.SqlServer.Dac.DacPackage]::Load($dacpacPath)
+}
+
+function Load-Profile([string] $publishProfilePath){
+    
+    [Microsoft.SqlServer.Dac.DacProfile]::Load($publishProfilePath)
+}
+
+function Deploy-Dacpac([string]$connectionString, [string]$dacpacInstancePath, [string]$databaseName, [bool]$upgradeExisting, [string]$publishProfilePath ){
+       
+    $dacServicesObject = Get-DacServices $connectionString
+    $dacpacInstance = Load-Dacpac $dacpacInstancePath
+
+    if (![string]::IsNullOrEmpty($publishProfilePath) -and (Test-Path($publishProfilePath)))
+    {   
+        $dacProfile = Load-Profile $publishProfilePath
+        $dacServicesObject.Deploy($dacpacInstance, $databaseName,$true, $dacProfile.DeployOptions) 
+    }
+    else
+    {   
+        $dacServicesObject.Deploy($dacpacInstance, $databaseName,$true)
+    }
+}
+
+function Register-Dacpac([string]$connectionstring, [string]$databaseName, [string]$dacpacApplicationName, [string]$dacpacApplicationVersion){
+    
+    $dacServicesObject = Get-DacServices $connectionString
+    $dacServicesObject.Register($databaseName, $dacpacApplicationName,$defaultDacPacApplicationVersion)
+    
+}
+
 
 function CreateDb([string] $databaseName, [string]$connectionString)
 {
@@ -423,6 +520,5 @@ function Get-SqlServerMajoreVersion([string]$sqlServerVersion)
     return $majorVersion
 }
 
-Export-ModuleMember -Function *-TargetResource
 
-
+   Export-ModuleMember -Function *-TargetResource

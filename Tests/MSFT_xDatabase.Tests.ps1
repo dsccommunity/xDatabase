@@ -38,3 +38,72 @@ Describe "Testing xDatabase resource execution" {
         }
     }
 }
+
+$testParameterWithPublishProfile = @{
+    Ensure = "Present"
+    SqlServer = "localhost"
+    SqlServerVersion = "2014"
+    DatabaseName = "test"
+    PublishProfilePath = "c:\publishProfile.xml"
+    DacpacPath = "c:\dacpac.dacpac"
+    DacPacApplicationName = "Testing"
+}
+
+$testParameterWithoutPublishProfile = @{
+    Ensure = "Present"
+    SqlServer = "localhost"
+    SqlServerVersion = "2014"
+    DatabaseName = "test"
+    DacpacPath = "c:\dacpac.dacpac"
+    DacPacApplicationName = "Testing"
+}
+
+Describe "Testing Set-TargetResource with a publishProfilePath" {
+    Copy-Item -Path "$here\$source" -Destination TestDrive:\script.ps1
+    
+    Mock Export-ModuleMember -MockWith {return $true}
+    . TestDrive:\script.ps1
+    
+    Mock -CommandName Test-Path -MockWith{ return $true }
+    
+    It "Set-TargetResource should use publishProfilePath" {
+    
+        Mock -CommandName Load-DacFx
+        Mock -CommandName Load-Dacpac
+        Mock -CommandName Load-Profile     
+        Mock -CommandName Deploy-Dacpac
+        Mock -CommandName Register-Dacpac
+                
+        (Set-TargetResource @testParameterWithPublishProfile)
+                
+        Assert-MockCalled -CommandName Load-Profile -Exactly 1  
+        Assert-MockCalled -CommandName Deploy-Dacpac -ParameterFilter { $publishProfilePath -eq "c:\publishProfile.xml"} -Exactly 1
+        Assert-MockCalled -CommandName Register-Dacpac -Exactly 1
+    }
+     
+}
+
+Describe "Testing Set-TargetResource without a publishProfilePath" {
+    Copy-Item -Path "$here\$source" -Destination TestDrive:\script.ps1
+    
+    Mock Export-ModuleMember -MockWith {return $true}
+    . TestDrive:\script.ps1
+    
+    Mock -CommandName Test-Path -MockWith{ return $true }
+     
+    Mock -CommandName Load-DacFx
+    Mock -CommandName Load-Dacpac
+    Mock -CommandName Deploy-Dacpac
+    Mock -CommandName Register-Dacpac  
+    Mock -CommandName Load-Profile    
+    
+    It "Set-TargetResource should not use publishProfilePath" {
+                              
+        (Set-TargetResource @testParameterWithoutPublishProfile)
+                         
+        Assert-MockCalled -CommandName Deploy-Dacpac -Exactly 1
+        Assert-MockCalled -CommandName Register-Dacpac -Exactly 1
+        Assert-MockCalled -CommandName Load-Profile -Exactly 0
+    }
+        
+}

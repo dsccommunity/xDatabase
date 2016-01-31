@@ -11,6 +11,7 @@ class MSFT_xDatabase : OMI_BaseResource
     [Write, Description("Path to DacPac, if this is specified dacpac deployment is performed")] String DacPacPath;
     [Write, Description("DacPac Application Name for Registration")] String DacPacApplicationName;
     [Write, Description("DacPac Application Version for Registration")] String DacPacApplicationVersion;
+    [Write, Description("Publish Profile XML file to control the publish, database name and connection string are ignored")] String PublishProfilePath;
 };
 
 

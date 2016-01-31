@@ -30,7 +30,7 @@ This is needed to support database upgrade using .dacpac files.
 This must specified if DacPacPath is provided.
 * **DacPacApplicationVersion**: This is an optional parameter needed for registration for database deployment using .dacpac files for dacpac registration.
 * **DatabaseName**: The name of the database to be deployed.
-
+* **PublishProfilePath**: The path to the dacpac publish profile xml file, the database name and connection string are ignored but all other publish profile settings available.
 ### xDBPackage
 
 * **DatabaseName**: The name of the database to be deployed.
@@ -42,6 +42,10 @@ This property can take the following values: { 2008-R2 | 2012 | 2014 }
 
 
 ## Versions
+
+### Unreleased
+
+* xDatabase: Added parameter PublishProfilePath which lets you use a publish profile xml file with dacpac deployments
 
 ### 1.4.0.0
 
@@ -107,8 +111,9 @@ configuration DacDeploy
         [PSCredential]
         $Credentials,
 
-        [string]$DacPacApplicationName
-
+        [string]$DacPacApplicationName,
+        
+        [string]PublishProfilePath
     )
 
     Node ‘NodeName’
@@ -122,7 +127,7 @@ configuration DacDeploy
             Credentials = $Credentials
             DacPacPath =  $DacPacPath
             DacPacApplicationName = $DacPacApplicationName
-
+            PublishProfilePath = $PublishProfilePath
         }
 
     }
