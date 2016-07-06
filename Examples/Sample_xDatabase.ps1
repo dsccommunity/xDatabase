@@ -74,6 +74,6 @@ $username = "sa"
 $credential = New-Object System.Management.Automation.PSCredential($username,$password)
 
 DacDeploy -ConfigurationData $ConfigurationData -Ensure "Absent" -DatabaseName "dbr1" -SqlServer ".\sqlexpress" -SqlServerVersion "2012" -NodeName "localhost" -Credentials $credential -BacPacPath C:\bacpac\Database.bacpac
-Start-DscConfiguration  -ComputerName "$($env:computername)" -Path .\DacDeploy -Wait -Force -Verbose
+Start-DscConfiguration  -ComputerName "localhost" -Path .\DacDeploy -Wait -Force -Verbose
 
 
