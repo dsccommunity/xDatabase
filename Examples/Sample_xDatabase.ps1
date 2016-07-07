@@ -1,3 +1,8 @@
+[Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingConvertToSecureStringWithPlainText", "")]
+[Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingComputerNameHardcoded", "")]
+Param(
+)
+
 $assemblylist = "Microsoft.SqlServer.Dac.dll",
                 "Microsoft.SqlServer.Smo.dll"
 $sqlpsreg110="HKLM:\SOFTWARE\Microsoft\PowerShell\1\ShellIds\Microsoft.SqlServer.Management.PowerShell.sqlps110"
@@ -70,4 +75,5 @@ $credential = New-Object System.Management.Automation.PSCredential($username,$pa
 
 DacDeploy -ConfigurationData $ConfigurationData -Ensure "Absent" -DatabaseName "dbr1" -SqlServer ".\sqlexpress" -SqlServerVersion "2012" -NodeName "localhost" -Credentials $credential -BacPacPath C:\bacpac\Database.bacpac
 Start-DscConfiguration  -ComputerName "localhost" -Path .\DacDeploy -Wait -Force -Verbose
+
 
