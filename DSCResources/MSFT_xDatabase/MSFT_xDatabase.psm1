@@ -256,20 +256,36 @@ function DeployDac([string] $databaseName, [string]$connectionString, [string]$s
 
     $dacServicesObject = new-object Microsoft.SqlServer.Dac.DacServices ($connectionString)
 
-    $dacpacInstance = [Microsoft.SqlServer.Dac.DacPackage]::Load($dacpacPath)
-
     try
     {
-        $dacServicesObject.Deploy($dacpacInstance, $databaseName,$true) 
-
-        $dacServicesObject.Register($databaseName, $dacpacApplicationName,$defaultDacPacApplicationVersion)
-
-        Write-Verbose("Dac Deployed")
+        $dacpacInstance = [Microsoft.SqlServer.Dac.DacPackage]::Load($dacpacPath)
     }
     catch
     {
-        Write-Verbose("Dac Deploy Failed")
+        Write-Verbose("Unable to load dacpac, error: $_")  
+        return    
     }
+    
+    try
+    {
+        $dacServicesObject.Deploy($dacpacInstance, $databaseName,$true)        
+    }
+    catch
+    {
+        Write-Verbose("Dac Deploy Failed, error: $_")
+        return
+    }
+    
+    try
+    {        
+        $dacServicesObject.Register($databaseName, $dacpacApplicationName,$defaultDacPacApplicationVersion)
+        Write-Verbose("Dac Deployed and Registered")    
+    }
+    catch
+    {
+        Write-Verbose("Dac Registration Failed, error: $_")
+    }
+    
 }
 
 function CreateDb([string] $databaseName, [string]$connectionString)
