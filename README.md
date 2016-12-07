@@ -48,6 +48,7 @@ This property can take the following values: { 2008-R2 | 2012 | 2014 }
 
 ### Unreleased
 * Converted appveyor.yml to install Pester from PSGallery instead of from Chocolatey.
+* Added logging for when dac deploy fails
 
 ### 1.4.0.0
 
