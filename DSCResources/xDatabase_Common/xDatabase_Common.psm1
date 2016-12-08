@@ -257,3 +257,19 @@ function Get-SqlDatabaseOwner([string]$DatabaseName, [string]$connectionString)
             
  
 }
+
+function Extract-DacPacForDb([string]$connectionString, [string]$sqlServerVersion, [string]$databaseName, [string]$dacpacPath)
+{
+    Load-DacFx -sqlserverVersion $sqlServerVersion
+
+    $dacService = new-object Microsoft.SqlServer.Dac.DacServices($connectionString)
+
+    try
+    {
+        $dacService.Extract($dacpacPath, $databaseName, "MyApplication", "1.0.0.0")
+    }
+    catch
+    {
+        Write-Verbose -Message "Extracting DacPac failed"
+    }
+}
