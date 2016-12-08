@@ -61,7 +61,6 @@ function Get-TargetResource #Not yet working
     $returnValue = @{
         Ensure = $PresentValue
         LoginName = $LoginName
-        AuthType = $SqlAuthType
         SqlServer = $SqlServer
     }
 
@@ -89,11 +88,6 @@ function Set-TargetResource
         
         [System.Management.Automation.PSCredential]
         $SqlConnectionCredential,
-
-        [parameter(Mandatory = $true)]
-        [string]
-        [ValidateSet("SQL","Windows")]
-        $SqlAuthType,
         
         [parameter(Mandatory = $true)]
         [System.String]
@@ -176,12 +170,7 @@ function Test-TargetResource #Not yet working
 
         [System.Management.Automation.PSCredential]
         $SqlConnectionCredential,
-
-        [parameter(Mandatory = $true)]
-        [string]
-        [ValidateSet("SQL","Windows")]
-        $SqlAuthType,
-        
+       
         [parameter(Mandatory = $true)]
         [System.String]
         $SqlServer
