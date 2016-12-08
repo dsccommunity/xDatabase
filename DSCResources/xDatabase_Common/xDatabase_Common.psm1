@@ -102,7 +102,7 @@ function DeleteDb([string] $databaseName, [string]$connectionString, [string]$sq
                 EXEC msdb.dbo.sp_delete_database_backuphistory @database_name = N'$databaseName'
                 ALTER DATABASE [$databaseName] SET  SINGLE_USER WITH ROLLBACK IMMEDIATE
                 USE [master]
-                DROP DATABASE [WPdb]
+                DROP DATABASE [$databaseName]
                END"
 
     $result = ExecuteSqlQuery -sqlConnection $sqlConnection -sqlQuery $query
