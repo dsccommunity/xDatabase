@@ -189,7 +189,7 @@ function Perform-Restore([string]$DbName, [string]$connectionString, [string]$sq
     }
     catch
     {
-        Throw "Restore Failed"
+        Throw "Restore Failed Exception: $_"
     }
 }
 
