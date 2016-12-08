@@ -160,23 +160,6 @@ function Construct-ConnectionString([string]$sqlServer, [System.Management.Autom
     return $connectionString
 }
 
-function Construct-SqlConnection([System.Management.Automation.PSCredential]$credentials, [string]$sqlServer)
-{   
-    if($PSBoundParameters.ContainsKey('credentials'))
-    {
-         $ConnectionString = "Server={0};uid={1};pwd={2};Integrated Security=False;" -f $sqlServer, $credentials.UserName, $credentials.Password
-    }
-    else
-    {
-         $ConnectionString = "Server={0};Integrated Security=SSPI;" -f $sqlServer
-    }
-
-    $sqlConnection = New-Object system.Data.SqlClient.SqlConnection
-    $sqlConnection.connectionstring = $connectionString
-
-    return $sqlConnection
-}
-
 function Perform-Restore([string]$DbName, [string]$connectionString, [string]$sqlserverVersion, [string]$bacpacFilePath)
 {
     Load-DacFx -sqlserverVersion $sqlserverVersion
