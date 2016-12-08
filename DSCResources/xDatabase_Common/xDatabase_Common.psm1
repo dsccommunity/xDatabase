@@ -273,3 +273,25 @@ function Extract-DacPacForDb([string]$connectionString, [string]$sqlServerVersio
         Write-Verbose -Message "Extracting DacPac failed"
     }
 }
+
+function Import-BacPacForDb([string]$connectionString, [string]$sqlServerVersion, [string]$databaseName, [string]$bacpacPath)
+{
+    Write-Verbose "Importing bacpac"
+
+    Load-DacFx -sqlserverVersion $sqlServerVersion
+
+    Write-Verbose $connectionString
+
+    $dacServiceInstance = new-object Microsoft.SqlServer.Dac.DacServices ($connectionString)
+
+    Write-Verbose $dacServiceInstance
+
+    try
+    {
+        $dacServiceInstance.ExportBacpac($bacpacPath, $databaseName)
+    }
+    catch
+    {
+        Write-Verbose -Message "Importing BacPac failed"
+    }
+}
