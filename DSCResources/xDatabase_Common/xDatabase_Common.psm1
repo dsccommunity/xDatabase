@@ -136,7 +136,7 @@ function ReturnSqlQuery([system.data.SqlClient.SQLConnection]$sqlConnection, [st
     return $dataSet.Tables
 }
 
-function Construct-ConnectionString([string]$sqlServer, [System.Management.Automation.PSCredential]$credentials, [string]$AuthType)
+function Construct-ConnectionString([string]$sqlServer, [System.Management.Automation.PSCredential]$credentials)
 {
     
     $server = "Server=$sqlServer;"
@@ -145,12 +145,8 @@ function Construct-ConnectionString([string]$sqlServer, [System.Management.Autom
     {
         $uid = $credentials.UserName
         $pwd = $credentials.GetNetworkCredential().Password
-        $userName = "uid=$uid;pwd=$pwd;"
-    }
-
-    if($AuthType -eq "SQL")
-    {
         $integratedSecurity = "Integrated Security=False;"
+        $userName = "uid=$uid;pwd=$pwd;"
     }
     else
     {
