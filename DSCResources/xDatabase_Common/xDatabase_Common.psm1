@@ -7,8 +7,6 @@ SmoFxInstallationError=Please ensure that Smo is installed.
 '@
 }
 
-Import-Module -DisableNameChecking $PSScriptRoot\..\xDatabase_Common
-
 function CheckIfDbExists([string]$connectionString, [string]$databaseName)
 {
     Write-Verbose("Inside CheckIfDbExists")
