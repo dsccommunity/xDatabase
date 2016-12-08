@@ -280,3 +280,4 @@ function Import-BacPacForDb([string]$connectionString, [string]$sqlServerVersion
         Write-Verbose -Message "Importing BacPac failed"
     }
 }
+
