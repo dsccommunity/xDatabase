@@ -11,7 +11,6 @@ $testParameter = @{
 }
 
 Describe "Testing xDatabase resource execution" {
-    New-Item TestDrive:\xDatabase -Type Directory
     Copy-Item -Path "$here\$source" -Destination TestDrive:\script.ps1
     Copy-Item -Path "$here\$common" -Destination TestDrive:\helper.ps1
 
@@ -24,7 +23,7 @@ Describe "Testing xDatabase resource execution" {
     Mock -CommandName Import-Module -MockWith {return $true}
     . TestDrive:\script.ps1
     . TestDrive:\helper.ps1
-    
+
     It "Get-TargetResource should return [Hashtable]" {
         (Get-TargetResource @testParameter).GetType()  -as [String] | Should Be "hashtable"
     }
