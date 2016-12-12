@@ -39,9 +39,9 @@ function Get-TargetResource #Not yet working
 
     )
 
-    if($PSBoundParameters.ContainsKey('Credentials'))
+    if($PSBoundParameters.ContainsKey('SqlConnectionCredential'))
     {
-        $ConnectionString = Construct-ConnectionString -sqlServer $SqlServer -credentials $SqlConnectionCredentials
+        $ConnectionString = Construct-ConnectionString -sqlServer $SqlServer -credentials $SqlConnectionCredential
     }
     else
     {
@@ -94,9 +94,9 @@ function Set-TargetResource
         $SqlServer
     )
     
-    if($PSBoundParameters.ContainsKey('Credentials'))
+    if($PSBoundParameters.ContainsKey('SqlConnectionCredential'))
     {
-        $ConnectionString = Construct-ConnectionString -sqlServer $SqlServer -credentials $SqlConnectionCredentials
+        $ConnectionString = Construct-ConnectionString -sqlServer $SqlServer -credentials $SqlConnectionCredential
     }
     else
     {
@@ -178,9 +178,9 @@ function Test-TargetResource #Not yet working
 
     try
     {
-        if($PSBoundParameters.ContainsKey('Credentials'))
+        if($PSBoundParameters.ContainsKey('SqlConnectionCredential'))
         {
-            $ConnectionString = Construct-ConnectionString -sqlServer $SqlServer -credentials $SqlConnectionCredentials
+            $ConnectionString = Construct-ConnectionString -sqlServer $SqlServer -credentials $SqlConnectionCredential
         }
         else
         {
