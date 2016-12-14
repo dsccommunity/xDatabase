@@ -1,4 +1,4 @@
-ï»¿[![Build status](https://ci.appveyor.com/api/projects/status/oidqwkp7ljqoefd3/branch/master?svg=true)](https://ci.appveyor.com/project/PowerShell/xdatabase/branch/master)
+[![Build status](https://ci.appveyor.com/api/projects/status/oidqwkp7ljqoefd3/branch/master?svg=true)](https://ci.appveyor.com/project/PowerShell/xdatabase/branch/master)
 
 # xDatabase
 
@@ -47,6 +47,8 @@ This property can take the following values: { 2008-R2 | 2012 | 2014 }
 ## Versions
 
 ### Unreleased
+
+### 1.5.0.0
 * Converted appveyor.yml to install Pester from PSGallery instead of from Chocolatey.
 * Added logging for when dac deploy fails
 
@@ -118,7 +120,7 @@ configuration DacDeploy
 
     )
 
-    Node â€˜NodeNameâ€™
+    Node ‘NodeName’
     {
         xDatabase DeployDac
         {
@@ -176,7 +178,7 @@ configuration BacPacDeploy
 
     )
 
-    Node â€˜NodeNameâ€™
+    Node ‘NodeName’
     {
         xDatabase DeployBacPac
         {
@@ -231,7 +233,7 @@ configuration DbDeploy
 
     )
 
-    Node â€˜NodeNameâ€™
+    Node ‘NodeName’
     {
         xDatabase DeployDatabase
 

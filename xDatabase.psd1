@@ -4,7 +4,7 @@
 # RootModule = ''
 
 # Version number of this module.
-ModuleVersion = '1.4.0.0'
+ModuleVersion = '1.5.0.0'
 
 # ID used to uniquely identify this module
 GUID = '8ad956dd-4a36-4767-9725-ed0466893edb'
@@ -54,11 +54,15 @@ PrivateData = @{
         # IconUri = ''
 
         # ReleaseNotes of this module
-        # ReleaseNotes = ''
+        ReleaseNotes = '* Converted appveyor.yml to install Pester from PSGallery instead of from Chocolatey.
+* Added logging for when dac deploy fails
+
+'
 
     } # End of PSData hashtable
 
 } # End of PrivateData hashtable
 }
+
 
 
