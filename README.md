@@ -1,4 +1,4 @@
-ï»¿[![Build status](https://ci.appveyor.com/api/projects/status/oidqwkp7ljqoefd3/branch/master?svg=true)](https://ci.appveyor.com/project/PowerShell/xdatabase/branch/master)
+[![Build status](https://ci.appveyor.com/api/projects/status/oidqwkp7ljqoefd3/branch/master?svg=true)](https://ci.appveyor.com/project/PowerShell/xdatabase/branch/master)
 
 # xDatabase
 
@@ -6,6 +6,9 @@ The **xDatabase** module contains the **xDatabase** and **xDBPackage** resources
 **xDatabase** handles creation/deletion of a database using a dacpac or SQL connection string.
 **xDBPackage** allows extraction of a dacpac or import of a bacpac from a database.
 For information on Data-Tier Applications please refer to [http://technet.microsoft.com/en-us/library/ee240739(v=sql.105).aspx](http://technet.microsoft.com/en-us/library/ee240739(v=sql.105).aspx).
+
+This project has adopted the [Microsoft Open Source Code of Conduct](https://opensource.microsoft.com/codeofconduct/).
+For more information see the [Code of Conduct FAQ](https://opensource.microsoft.com/codeofconduct/faq/) or contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additional questions or comments.
 
 ## Contributing
 Please check out common DSC Resources [contributing guidelines](https://github.com/PowerShell/DscResource.Kit/blob/master/CONTRIBUTING.md).
@@ -24,7 +27,7 @@ This property can take the following values: { 2008-R2 | 2012 | 2014 }
 * **BacPacPath**: The path to the .bacpac file to be used for database restore
 If this is used, the DacPacPath (see below) cannot be specified.
 * **DacPacPath**: The path to the .dacpac file to be used for database schema deploy.
-If this is used, the BacPacPath (see below) cannot be specified.
+If this is used, the BacPacPath (see above) cannot be specified.
 * **DacPacApplicationName**: For deploying a database using .dacpac file, an application name with which the dacpac is registered.
 This is needed to support database upgrade using .dacpac files.
 This must specified if DacPacPath is provided.
@@ -42,6 +45,12 @@ This property can take the following values: { 2008-R2 | 2012 | 2014 }
 
 
 ## Versions
+
+### Unreleased
+
+### 1.5.0.0
+* Converted appveyor.yml to install Pester from PSGallery instead of from Chocolatey.
+* Added logging for when dac deploy fails
 
 ### 1.4.0.0
 
@@ -111,7 +120,7 @@ configuration DacDeploy
 
     )
 
-    Node â€˜NodeNameâ€™
+    Node ‘NodeName’
     {
         xDatabase DeployDac
         {
@@ -169,7 +178,7 @@ configuration BacPacDeploy
 
     )
 
-    Node â€˜NodeNameâ€™
+    Node ‘NodeName’
     {
         xDatabase DeployBacPac
         {
@@ -224,7 +233,7 @@ configuration DbDeploy
 
     )
 
-    Node â€˜NodeNameâ€™
+    Node ‘NodeName’
     {
         xDatabase DeployDatabase
 
