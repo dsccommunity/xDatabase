@@ -1,12 +1,12 @@
 $here = Split-Path -Parent $MyInvocation.MyCommand.Path
 $leaf = Split-Path -Leaf $MyInvocation.MyCommand.Path
-$source = "..\DSCResources\$($leaf.Split(".")[0])\$($leaf -replace ".Tests.ps1$",".psm1")"
-$common = "..\DSCResources\xDatabase_Common\xDatabase_Common.psm1"
+$source = "..\..\DSCResources\$($leaf.Split(".")[0])\$($leaf -replace ".Tests.ps1$",".psm1")"
+$common = "..\..\DSCResources\xDatabase_Common\xDatabase_Common.psm1"
 
 $testParameter = @{
     Ensure = "Present"
     SqlServer = "localhost"
-    SqlServerVersion = "2014"
+    SqlServerVersion = "2016"
     DatabaseName = "test"
 }
 
