@@ -1,6 +1,7 @@
 $here = Split-Path -Parent $MyInvocation.MyCommand.Path
 $leaf = Split-Path -Leaf $MyInvocation.MyCommand.Path
 $source = "..\DSCResources\$($leaf.Split(".")[0])\$($leaf -replace ".Tests.ps1$",".psm1")"
+$common = "..\DSCResources\xDatabase_Common\xDatabase_Common.psm1"
 
 $testParameter = @{
     Ensure = "Present"
@@ -11,6 +12,7 @@ $testParameter = @{
 
 Describe "Testing xDatabase resource execution" {
     Copy-Item -Path "$here\$source" -Destination TestDrive:\script.ps1
+    Copy-Item -Path "$here\$common" -Destination TestDrive:\helper.ps1
 
     $connectionObj = New-Object -TypeName psobject
     $connectionObj | Add-Member -MemberType NoteProperty -Name connectionString -Value $null
@@ -18,7 +20,9 @@ Describe "Testing xDatabase resource execution" {
     Mock -CommandName New-Object -ParameterFilter { $TypeName -eq "system.Data.SqlClient.SqlConnection" } -MockWith {return $connectionObj}
 
     Mock -CommandName Export-ModuleMember -MockWith {return $true}
+    Mock -CommandName Import-Module -MockWith {return $true}
     . TestDrive:\script.ps1
+    . TestDrive:\helper.ps1
 
     It "Get-TargetResource should return [Hashtable]" {
         (Get-TargetResource @testParameter).GetType()  -as [String] | Should Be "hashtable"
