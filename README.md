@@ -48,6 +48,8 @@ This property can take the following values: { 2008-R2 | 2012 | 2014 }
 
 ### Unreleased
 
+### 1.6.0.0
+
 * Moved internal functions to a common helper module
 
 ### 1.5.0.0
