@@ -49,7 +49,12 @@ This property can take the following values: { 2008-R2 | 2012 | 2014 }
 ### Unreleased
 * Added support SQL Server 2016
 
+### 1.6.0.0
+
+* Moved internal functions to a common helper module
+
 ### 1.5.0.0
+
 * Converted appveyor.yml to install Pester from PSGallery instead of from Chocolatey.
 * Added logging for when dac deploy fails
 
@@ -121,7 +126,7 @@ configuration DacDeploy
 
     )
 
-    Node ‘NodeName’
+    Node â€˜NodeNameâ€™
     {
         xDatabase DeployDac
         {
@@ -179,7 +184,7 @@ configuration BacPacDeploy
 
     )
 
-    Node ‘NodeName’
+    Node â€˜NodeNameâ€™
     {
         xDatabase DeployBacPac
         {
@@ -234,7 +239,7 @@ configuration DbDeploy
 
     )
 
-    Node ‘NodeName’
+    Node â€˜NodeNameâ€™
     {
         xDatabase DeployDatabase
 
