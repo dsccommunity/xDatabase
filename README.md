@@ -47,6 +47,7 @@ This property can take the following values: { 2008-R2 | 2012 | 2014 }
 ## Versions
 
 ### Unreleased
+* Added support SQL Server 2016
 
 ### 1.6.0.0
 
