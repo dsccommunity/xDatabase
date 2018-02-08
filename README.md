@@ -48,6 +48,9 @@ This property can take the following values: { 2008-R2 | 2012 | 2014 }
 
 ### Unreleased
 
+### 1.7.0.0
+* Added support SQL Server 2016
+
 ### 1.6.0.0
 
 * Moved internal functions to a common helper module
