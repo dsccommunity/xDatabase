@@ -6,7 +6,7 @@ $common = "..\..\DSCResources\xDatabase_Common\xDatabase_Common.psm1"
 $testParameter = @{
     Ensure = "Present"
     SqlServer = "localhost"
-    SqlServerVersion = "2016"
+    SqlServerVersion = "2017"
     DatabaseName = "test"
 }
 
