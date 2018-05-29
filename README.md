@@ -1,4 +1,4 @@
-[![Build status](https://ci.appveyor.com/api/projects/status/oidqwkp7ljqoefd3/branch/master?svg=true)](https://ci.appveyor.com/project/PowerShell/xdatabase/branch/master)
+﻿[![Build status](https://ci.appveyor.com/api/projects/status/oidqwkp7ljqoefd3/branch/master?svg=true)](https://ci.appveyor.com/project/PowerShell/xdatabase/branch/master)
 
 # xDatabase
 
@@ -23,7 +23,7 @@ Please check out common DSC Resources [contributing guidelines](https://github.c
 * **Credentials**: The credential to connect to the SQL server.
 * **SqlServer**: The SQL server.
 * **SqlServerVersion**: The version of the SQL Server.
-This property can take the following values: { 2008-R2 | 2012 | 2014 }
+This property can take the following values: { 2008-R2 | 2012 | 2014 | 2016 | 2017 }
 * **BacPacPath**: The path to the .bacpac file to be used for database restore
 If this is used, the DacPacPath (see below) cannot be specified.
 * **DacPacPath**: The path to the .dacpac file to be used for database schema deploy.
@@ -38,17 +38,22 @@ This must specified if DacPacPath is provided.
 
 * **DatabaseName**: The name of the database to be deployed.
 * **SqlServer**: The SQL server.
-* **SqlServerVersion**: The version of the SQL Server. 
-This property can take the following values: { 2008-R2 | 2012 | 2014 }
+* **SqlServerVersion**: The version of the SQL Server.
+This property can take the following values: { 2008-R2 | 2012 | 2014 | 2016 | 2017 }
 * **Path**: The path to the .bacpac or .dacpac file to be used to export a database to a bacpac or extract a db to a dacpac respectively.
 * **Type**: This property can take the following values for dacpac extraction and bacpac export: { DACPAC | BACPAC }
-
 
 ## Versions
 
 ### Unreleased
 
+### 1.8.0.0
+
+* Added support for SQL Server 2017
+* xDBPackage now uses the shared function to identify the paths for the different SQL server versions
+
 ### 1.7.0.0
+
 * Added support SQL Server 2016
 
 ### 1.6.0.0
@@ -80,10 +85,9 @@ This property can take the following values: { 2008-R2 | 2012 | 2014 }
 
 ### 1.0.0.0
 
-* Initial release with the following resources 
-    * xDatabase
-    * xDBPackage
-
+* Initial release with the following resources
+  * xDatabase
+  * xDBPackage
 
 ## Examples
 
