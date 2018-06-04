@@ -13,8 +13,7 @@ foreach ($sqlServerVersion in $sqlServerVersions)
     DatabaseName = "test"
   }
 
-  Describe "Testing xDatabase resource execution"
-  {
+  Describe "Testing xDatabase resource execution" {
     Copy-Item -Path "$here\$source" -Destination TestDrive:\script.ps1
     Copy-Item -Path "$here\$common" -Destination TestDrive:\helper.ps1
 
@@ -28,24 +27,19 @@ foreach ($sqlServerVersion in $sqlServerVersions)
     . TestDrive:\script.ps1
     . TestDrive:\helper.ps1
 
-    It "Get-TargetResource should return [Hashtable]"
-    {
+    It "Get-TargetResource should return [Hashtable]" {
       (Get-TargetResource @testParameter).GetType()  -as [String] | Should Be "hashtable"
     }
 
-    Context "database does not exist"
-    {
+    Context "database does not exist" {
       $connectionObj | Add-Member -MemberType ScriptMethod -Name Open -Value {throw [System.Data.SqlClient.SqlException]}
-      It "Test-TargetResource should return false"
-      {
+      It "Test-TargetResource should return false" {
         Test-TargetResource @testParameter | Should Be $false
       }
     }
-    Context "database does exist"
-    {
+    Context "database does exist" {
         $connectionObj | Add-Member -MemberType ScriptMethod -Name Open -Value {return $null} -Force
-      It "Test-TargetResource should return false"
-      {
+      It "Test-TargetResource should return false" {
         Test-TargetResource @testParameter | Should Be $true
       }
     }
