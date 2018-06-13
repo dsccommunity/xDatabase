@@ -4,7 +4,7 @@
 # RootModule = ''
 
 # Version number of this module.
-ModuleVersion = '1.7.0.0'
+moduleVersion = '1.8.0.0'
 
 # ID used to uniquely identify this module
 GUID = '8ad956dd-4a36-4767-9725-ed0466893edb'
@@ -54,7 +54,8 @@ PrivateData = @{
         # IconUri = ''
 
         # ReleaseNotes of this module
-        ReleaseNotes = '* Added support SQL Server 2016
+        ReleaseNotes = '* Added support for SQL Server 2017
+* xDBPackage now uses the shared function to identify the paths for the different SQL server versions
 
 '
 
@@ -62,6 +63,7 @@ PrivateData = @{
 
 } # End of PrivateData hashtable
 }
+
 
 
 
