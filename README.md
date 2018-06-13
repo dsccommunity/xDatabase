@@ -49,9 +49,6 @@ This property can take the following values: { 2008-R2 | 2012 | 2014 | 2016 | 20
 ### Unreleased
 
 * Added support for SQL Server 2017
-
-### 1.8.0.0
-
 * xDBPackage now uses the shared function to identify the paths for the different SQL server versions
 
 ### 1.7.0.0
