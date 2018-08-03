@@ -40,7 +40,7 @@ function DeployDac([string] $databaseName, [string]$connectionString, [string]$s
 
     if($PSBoundParameters.ContainsKey('dacpacApplicationVersion'))
     {
-        $defaultDacPacApplicationVersion = $defaultDacPacApplicationVersion
+        $defaultDacPacApplicationVersion = $dacpacApplicationVersion
     }
 
     try
@@ -134,6 +134,16 @@ function ReturnSqlQuery([system.data.SqlClient.SQLConnection]$sqlConnection, [st
     $sqlAdapter.Fill($dataSet)
 
     return $dataSet.Tables
+}
+
+function Get-DacPacDeployedVersion([string]$connectionString, [string]$DbName)
+{
+    $sqlConnection = new-object system.data.SqlClient.SQLConnection($connectionString)
+    $dacpacQueryString = 'SELECT instance_name as DBName, type_version as DacPacVersion FROM msdb.dbo.sysdac_instances'
+
+    $result = ReturnSqlQuery -sqlConnection $sqlConnection -SqlQuery $dacpacQueryString
+
+    return $result.Where({$_.DBName -eq $DBName}).DacPacVersion
 }
 
 function Construct-ConnectionString([string]$sqlServer, [System.Management.Automation.PSCredential]$credentials)
@@ -286,5 +296,3 @@ function Import-BacPacForDb([string]$connectionString, [string]$sqlServerVersion
         Write-Verbose -Message "Importing BacPac failed"
     }
 }
-
-
