@@ -45,3 +45,27 @@ foreach ($sqlServerVersion in $sqlServerVersions)
     }
   }
 }
+
+Describe 'xDatabase_Common\Get-DacPacDeployedVersion' -Tag 'Helper' {
+  Copy-Item -Path "$here\$common" -Destination TestDrive:\helper.ps1
+  . TestDrive:\helper.ps1
+
+  $mockedDatabase = @(
+    @{DBName = 'DBTest'; DacPacVersion = '1.0.0.0'},
+    @{DBName = 'TestDB'; DacPacVersion = '1.2.0.1'}
+  )
+
+  Mock -CommandName New-Object -MockWith {} 
+  Mock -CommandName ReturnSqlQuery -MockWith {$mockedDatabase}
+
+  It 'Should return DacPac version from the database' {
+    $result = Get-DacPacDeployedVersion -ConnectionString 'ConnectionString' -DbName 'TestDB'
+    $result | Should Be '1.2.0.1'
+  }
+
+  It 'Should return null if the database was not deployed by DacPac' {
+    $result = Get-DacPacDeployedVersion -ConnectionString 'ConnectionString' -DbName 'NonDacPac'
+    $result | Should -BeNullOrEmpty
+  }
+}
+

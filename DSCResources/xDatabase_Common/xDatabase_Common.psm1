@@ -36,11 +36,13 @@ function CheckIfDbExists([string]$connectionString, [string]$databaseName)
 function DeployDac([string] $databaseName, [string]$connectionString, [string]$sqlserverVersion,
                    [string]$dacpacPath, [string]$dacpacApplicationName, [string]$dacpacApplicationVersion)
 {
-    $defaultDacPacApplicationVersion = "1.0.0.0"
-
     if($PSBoundParameters.ContainsKey('dacpacApplicationVersion'))
     {
         $defaultDacPacApplicationVersion = $dacpacApplicationVersion
+    }
+    else
+    {
+        $defaultDacPacApplicationVersion = "1.0.0.0"
     }
 
     try
@@ -136,12 +138,23 @@ function ReturnSqlQuery([system.data.SqlClient.SQLConnection]$sqlConnection, [st
     return $dataSet.Tables
 }
 
-function Get-DacPacDeployedVersion([string]$connectionString, [string]$DbName)
+function Get-DacPacDeployedVersion
 {
-    $sqlConnection = new-object system.data.SqlClient.SQLConnection($connectionString)
+    param
+    (
+        [Parameter(Mandatory = $true)]
+        [string]
+        $ConnectionString,
+        
+        [Parameter(Mandatory = $true)]
+        [string]
+        $DbName
+    )
+
+    $sqlConnection = New-Object System.Data.SqlClient.SQLConnection($ConnectionString)
     $dacpacQueryString = 'SELECT instance_name as DBName, type_version as DacPacVersion FROM msdb.dbo.sysdac_instances'
 
-    $result = ReturnSqlQuery -sqlConnection $sqlConnection -SqlQuery $dacpacQueryString
+    $result = ReturnSqlQuery -SqlConnection $sqlConnection -SqlQuery $dacpacQueryString
 
     return $result.Where({$_.DBName -eq $DBName}).DacPacVersion
 }
