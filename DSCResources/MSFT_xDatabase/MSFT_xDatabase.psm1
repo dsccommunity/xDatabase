@@ -206,15 +206,15 @@ function Test-TargetResource
         }
         else
         {
-            $deployedVerison = Get-DacPacDeployedVersion -ConnectionString $ConnectionString -DbName $DatabaseName
-            if($deployedVerison -eq $DacPacApplicationVersion)
+            if($DacPacApplicationVersion)
             {
-                return $true
+                $deployedVersion = Get-DacPacDeployedVersion -ConnectionString $ConnectionString -DbName $DatabaseName
+                if($deployedVersion -eq $DacPacApplicationVersion)
+                {
+                    return $true
+                }
             }
-            else
-            {
-                return $false
-            }
+            return $false
         }
     }
     else
