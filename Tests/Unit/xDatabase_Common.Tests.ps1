@@ -13,7 +13,7 @@ InModuleScope $script:HelperModuleName {
           @{DBName = 'TestDB'; DacPacVersion = '1.2.0.1'}
         )
       
-        Mock -CommandName New-Object -MockWith {} 
+        Mock -CommandName New-Object
         Mock -CommandName ReturnSqlQuery -MockWith {$mockedDatabase}
       
         It 'Should return DacPac version from the database' {
