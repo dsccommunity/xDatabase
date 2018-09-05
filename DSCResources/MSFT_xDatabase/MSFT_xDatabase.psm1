@@ -206,6 +206,14 @@ function Test-TargetResource
         }
         else
         {
+            if($DacPacApplicationVersion)
+            {
+                $deployedVersion = Get-DacPacDeployedVersion -ConnectionString $ConnectionString -DbName $DatabaseName
+                if($deployedVersion -eq $DacPacApplicationVersion)
+                {
+                    return $true
+                }
+            }
             return $false
         }
     }
@@ -221,4 +229,3 @@ function Test-TargetResource
 }
 
 Export-ModuleMember -Function *-TargetResource
-
