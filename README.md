@@ -48,6 +48,8 @@ This property can take the following values: { 2008-R2 | 2012 | 2014 | 2016 | 20
 
 ### Unreleased
 
+### 1.9.0.0
+
 * xDatabase Test-TargetResource will now check DacPacVersion if DacPacPath parameter and DB exist. If the DacPacApplicationVersion is supplied and matches the deployed version we will return $true. ([issue #41](https://github.com/PowerShell/xDatabase/issues/41))
 
 ### 1.8.0.0
