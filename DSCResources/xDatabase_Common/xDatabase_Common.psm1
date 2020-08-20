@@ -203,18 +203,14 @@ function Load-DacFx([string]$sqlserverVersion)
 {
     $majorVersion = Get-SqlServerMajoreVersion -sqlServerVersion $sqlserverVersion
 
-    $64BitArch = [Environment]::Is64BitOperatingSystem
 
-    if($64BitArch)
+    if(Test-Path -Path "${env:ProgramFiles(x86)})\Microsoft SQL Server\$majorVersion\DAC\bin\Microsoft.SqlServer.Dac.dll")
     {
-        if(Test-Path -Path "${env:ProgramFiles(x86)})\Microsoft SQL Server\$majorVersion\DAC\bin\Microsoft.SqlServer.Dac.dll")
-        {
-            $DacFxLocation = "${env:ProgramFiles(x86)}\Microsoft SQL Server\$majorVersion\DAC\bin\Microsoft.SqlServer.Dac.dll"
-        }
-        else
-        {
-            $DacFxLocation = "$env:ProgramFiles\Microsoft SQL Server\$majorVersion\DAC\bin\Microsoft.SqlServer.Dac.dll"
-        }
+        $DacFxLocation = "${env:ProgramFiles(x86)}\Microsoft SQL Server\$majorVersion\DAC\bin\Microsoft.SqlServer.Dac.dll"
+    }
+    else
+    {
+        $DacFxLocation = "$env:ProgramFiles\Microsoft SQL Server\$majorVersion\DAC\bin\Microsoft.SqlServer.Dac.dll"
     }
 
     try
@@ -231,18 +227,13 @@ function Load-SmoAssembly([string]$sqlserverVersion)
 {
     $majorVersion = Get-SqlServerMajoreVersion -sqlServerVersion $sqlserverVersion
 
-    $64BitArch = [Environment]::Is64BitOperatingSystem
-
-    if($64BitArch)
+    if(Test-Path -Path "${env:ProgramFiles(x86)}\Microsoft SQL Server\$majorVersion\SDK\Assemblies\Microsoft.SqlServer.Smo.dll")
     {
-        if(Test-Path -Path "${env:ProgramFiles(x86)}\Microsoft SQL Server\$majorVersion\SDK\Assemblies\Microsoft.SqlServer.Smo.dll")
-        {
-            $SmoLocation = "${env:ProgramFiles(x86)}\Microsoft SQL Server\$majorVersion\SDK\Assemblies\Microsoft.SqlServer.Smo.dll"
-        }
-        else
-        {
-            $SmoLocation = "$env:ProgramFiles\Microsoft SQL Server\$majorVersion\SDK\Assemblies\Microsoft.SqlServer.Smo.dll"
-        }
+        $SmoLocation = "${env:ProgramFiles(x86)}\Microsoft SQL Server\$majorVersion\SDK\Assemblies\Microsoft.SqlServer.Smo.dll"
+    }
+    else
+    {
+        $SmoLocation = "$env:ProgramFiles\Microsoft SQL Server\$majorVersion\SDK\Assemblies\Microsoft.SqlServer.Smo.dll"
     }
 
     try
