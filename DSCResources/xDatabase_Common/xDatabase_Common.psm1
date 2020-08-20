@@ -203,7 +203,19 @@ function Load-DacFx([string]$sqlserverVersion)
 {
     $majorVersion = Get-SqlServerMajoreVersion -sqlServerVersion $sqlserverVersion
 
-    $DacFxLocation = "${env:ProgramFiles(x86)}\Microsoft SQL Server\$majorVersion\DAC\bin\Microsoft.SqlServer.Dac.dll"
+    $64BitArch = [Environment]::Is64BitOperatingSystem
+
+    if($64BitArch)
+    {
+        if(Test-Path -Path "${env:ProgramFiles(x86)})\Microsoft SQL Server\$majorVersion\DAC\bin\Microsoft.SqlServer.Dac.dll")
+        {
+            $DacFxLocation = "${env:ProgramFiles(x86)}\Microsoft SQL Server\$majorVersion\DAC\bin\Microsoft.SqlServer.Dac.dll"
+        }
+        else
+        {
+            $DacFxLocation = "$env:ProgramFiles\Microsoft SQL Server\$majorVersion\DAC\bin\Microsoft.SqlServer.Dac.dll"
+        }
+    }
 
     try
     {  
@@ -219,7 +231,20 @@ function Load-SmoAssembly([string]$sqlserverVersion)
 {
     $majorVersion = Get-SqlServerMajoreVersion -sqlServerVersion $sqlserverVersion
 
-    $SmoLocation = "${env:ProgramFiles(x86)}\Microsoft SQL Server\$majorVersion\SDK\Assemblies\Microsoft.SqlServer.Smo.dll"
+    $64BitArch = [Environment]::Is64BitOperatingSystem
+
+    if($64BitArch)
+    {
+        if(Test-Path -Path "${env:ProgramFiles(x86)}\Microsoft SQL Server\$majorVersion\SDK\Assemblies\Microsoft.SqlServer.Smo.dll")
+        {
+            $SmoLocation = "${env:ProgramFiles(x86)}\Microsoft SQL Server\$majorVersion\SDK\Assemblies\Microsoft.SqlServer.Smo.dll"
+        }
+        else
+        {
+            $SmoLocation = "$env:ProgramFiles\Microsoft SQL Server\$majorVersion\SDK\Assemblies\Microsoft.SqlServer.Smo.dll"
+        }
+    }
+
     try
     {  
         [System.Reflection.Assembly]::LoadFrom($SmoLocation) | Out-Null
@@ -253,6 +278,10 @@ function Get-SqlServerMajoreVersion([string]$sqlServerVersion)
         "2017"
         {
             $majorVersion = 140
+        }
+        "2019"
+        {
+            $majorVersion = 150
         }
     }
 
