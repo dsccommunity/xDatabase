@@ -12,5 +12,3 @@ class MSFT_xDatabase : OMI_BaseResource
     [Write, Description("DacPac Application Name for Registration")] String DacPacApplicationName;
     [Write, Description("DacPac Application Version for Registration")] String DacPacApplicationVersion;
 };
-
-
