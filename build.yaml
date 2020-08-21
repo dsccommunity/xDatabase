@@ -35,7 +35,6 @@ BuildWorkflow:
 CopyPaths:
   - DSCResources
   - en-US
-  - Modules
 Encoding: UTF8
 VersionedOutputDirectory: true
 
