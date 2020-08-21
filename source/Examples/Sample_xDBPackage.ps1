@@ -1,7 +1,6 @@
 [Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingConvertToSecureStringWithPlainText", "")]
 [Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingComputerNameHardcoded", "")]
-Param(
-)
+param ()
 
 
 configuration DbBackup
@@ -34,7 +33,7 @@ configuration DbBackup
 
     )
     Node 'localhost'
-    { 
+    {
         xDBPackage Backup
         {
             SqlServer = $SqlServer
@@ -43,7 +42,7 @@ configuration DbBackup
             Type = $Type
             DatabaseName = $DatabaseName
             Path = $Path
-        } 
+        }
     }
 
 }
@@ -60,10 +59,10 @@ $ConfigurationData = @{
     )
 }
 
-$password = "Zodiac!99" | ConvertTo-SecureString -asPlainText -Force
-$username = "sa" 
-$credential = New-Object System.Management.Automation.PSCredential($username,$password)
+# $password = "Zodiac!99" | ConvertTo-SecureString -asPlainText -Force
+# $username = "sa"
+# $credential = New-Object System.Management.Automation.PSCredential($username,$password)
 
-DbBackup -ConfigurationData $ConfigurationData -DatabaseName "dac_db" -Credentials $credential -Path "c:\dsc\apmauth.dacpac" -SqlServer ".\sqlexpress" -SqlServerVersion "2012" -Type "DACPAC"
+# DbBackup -ConfigurationData $ConfigurationData -DatabaseName "dac_db" -Credentials $credential -Path "c:\dsc\apmauth.dacpac" -SqlServer ".\sqlexpress" -SqlServerVersion "2012" -Type "DACPAC"
 
-Start-DscConfiguration -ComputerName "localhost" -Path ".\DbBackup"  -Wait -Force -Verbose
+# Start-DscConfiguration -ComputerName "localhost" -Path ".\DbBackup"  -Wait -Force -Verbose

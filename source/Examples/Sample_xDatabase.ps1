@@ -1,7 +1,6 @@
 [Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingConvertToSecureStringWithPlainText", "")]
 [Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingComputerNameHardcoded", "")]
-Param(
-)
+param ()
 
 $assemblylist = "Microsoft.SqlServer.Dac.dll",
                 "Microsoft.SqlServer.Smo.dll"
@@ -42,10 +41,10 @@ configuration DacDeploy
         [string]$DacPacApplicationName
 
     )
-     
-    
+
+
     Node 'localhost'
-    { 
+    {
         xDatabase DeployDac
         {
             Ensure = $Ensure
@@ -54,8 +53,8 @@ configuration DacDeploy
             DatabaseName = $DatabaseName
             Credentials = $Credentials
             BacPacPath =  $BacPacPath
-        } 
-    } 
+        }
+    }
 }
 
 $ConfigurationData = @{
@@ -69,11 +68,9 @@ $ConfigurationData = @{
         }
     )
 }
-$password = "Zodiac!99" | ConvertTo-SecureString -asPlainText -Force
-$username = "sa" 
-$credential = New-Object System.Management.Automation.PSCredential($username,$password)
+# $password = "Zodiac!99" | ConvertTo-SecureString -asPlainText -Force
+# $username = "sa"
+# $credential = New-Object System.Management.Automation.PSCredential($username,$password)
 
-DacDeploy -ConfigurationData $ConfigurationData -Ensure "Absent" -DatabaseName "dbr1" -SqlServer ".\sqlexpress" -SqlServerVersion "2012" -NodeName "localhost" -Credentials $credential -BacPacPath C:\bacpac\Database.bacpac
-Start-DscConfiguration  -ComputerName "localhost" -Path .\DacDeploy -Wait -Force -Verbose
-
-
+# DacDeploy -ConfigurationData $ConfigurationData -Ensure "Absent" -DatabaseName "dbr1" -SqlServer ".\sqlexpress" -SqlServerVersion "2012" -NodeName "localhost" -Credentials $credential -BacPacPath C:\bacpac\Database.bacpac
+# Start-DscConfiguration  -ComputerName "localhost" -Path .\DacDeploy -Wait -Force -Verbose
