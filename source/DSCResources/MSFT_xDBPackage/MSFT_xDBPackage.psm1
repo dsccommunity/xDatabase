@@ -1,32 +1,35 @@
-Import-Module -DisableNameChecking $PSScriptRoot\..\xDatabase_Common
+Import-Module -DisableNameChecking -Name $PSScriptRoot\..\..\Modules\xDatabase.Common
+
 function Get-TargetResource
 {
     [CmdletBinding()]
     [OutputType([System.Collections.Hashtable])]
     param
     (
-        [parameter(Mandatory = $true)]
+        [Parameter(Mandatory = $true)]
         [System.String]
         $DatabaseName,
 
-        [parameter(Mandatory = $true)]
+        [Parameter(Mandatory = $true)]
         [System.String]
         $SqlServer,
 
-        [parameter(Mandatory = $true)]
+        [Parameter(Mandatory = $true)]
         [System.String]
         $Path,
 
-        [parameter(Mandatory = $true)]
-        [ValidateSet("DACPAC","BACPAC")]
+        [Parameter(Mandatory = $true)]
+        [ValidateSet("DACPAC", "BACPAC")]
         [System.String]
         $Type,
 
-        [parameter(Mandatory = $true)]
-        [ValidateSet("2008-R2","2012","2014","2016","2017","2019")]
+        [Parameter(Mandatory = $true)]
+        [ValidateSet("2008-R2", "2012", "2014", "2016", "2017", "2019")]
         [System.String]
         $SqlServerVersion
     )
+
+    Write-Verbose -Message 'Getting current state.'
 }
 
 function Set-TargetResource
@@ -34,46 +37,50 @@ function Set-TargetResource
     [CmdletBinding()]
     param
     (
+        [Parameter()]
         [System.Management.Automation.PSCredential]
         $Credentials,
 
-        [parameter(Mandatory = $true)]
+        [Parameter(Mandatory = $true)]
         [System.String]
         $DatabaseName,
 
-        [parameter(Mandatory = $true)]
+        [Parameter(Mandatory = $true)]
         [System.String]
         $SqlServer,
 
-        [parameter(Mandatory = $true)]
+        [Parameter(Mandatory = $true)]
         [System.String]
         $Path,
 
-        [parameter(Mandatory = $true)]
-        [ValidateSet("DACPAC","BACPAC")]
+        [Parameter(Mandatory = $true)]
+        [ValidateSet("DACPAC", "BACPAC")]
         [System.String]
         $Type,
 
-        [parameter(Mandatory = $true)]
-        [ValidateSet("2008-R2","2012","2014","2016","2017","2019")]
+        [Parameter(Mandatory = $true)]
+        [ValidateSet("2008-R2", "2012", "2014", "2016", "2017", "2019")]
         [System.String]
         $SqlServerVersion
     )
 
+    Write-Verbose -Message 'Setting desired state.'
+
     $connectionString = Construct-ConnectionString -sqlServer $SqlServer -credentials $Credentials
 
-    switch($Type)
+    switch ($Type)
     {
         "DACPAC"
         {
             Extract-DacPacForDb -connectionString $connectionString -sqlServerVersion $SqlServerVersion -databaseName $DatabaseName -dacpacPath $Path
         }
+
         "BACPAC"
         {
             Import-BacPacForDb -connectionString $connectionString -sqlServerVersion $SqlServerVersion -databaseName $DatabaseName -bacpacPath $Path
         }
     }
-    
+
 }
 
 function Test-TargetResource
@@ -82,37 +89,40 @@ function Test-TargetResource
     [OutputType([System.Boolean])]
     param
     (
+        [Parameter()]
         [System.Management.Automation.PSCredential]
         $Credentials,
 
-        [parameter(Mandatory = $true)]
+        [Parameter(Mandatory = $true)]
         [System.String]
         $DatabaseName,
 
-        [parameter(Mandatory = $true)]
+        [Parameter(Mandatory = $true)]
         [System.String]
         $SqlServer,
 
-        [parameter(Mandatory = $true)]
+        [Parameter(Mandatory = $true)]
         [System.String]
         $Path,
 
-        [parameter(Mandatory = $true)]
-        [ValidateSet("DACPAC","BACPAC")]
+        [Parameter(Mandatory = $true)]
+        [ValidateSet("DACPAC", "BACPAC")]
         [System.String]
         $Type,
 
-        [parameter(Mandatory = $true)]
-        [ValidateSet("2008-R2","2012","2014","2016","2017","2019")]
+        [Parameter(Mandatory = $true)]
+        [ValidateSet("2008-R2", "2012", "2014", "2016", "2017", "2019")]
         [System.String]
         $SqlServerVersion
     )
 
+    Write-Verbose -Message 'Determine the current state.'
+
     $connectionString = Construct-ConnectionString -sqlServer $SqlServer -credentials $Credentials
 
-    $dbExists = CheckIfDbExists -connectionString $connectionString -databaseName $DatabaseName 
+    $dbExists = CheckIfDbExists -connectionString $connectionString -databaseName $DatabaseName
 
-    if($dbExists)
+    if ($dbExists)
     {
         return $false
     }
@@ -120,8 +130,20 @@ function Test-TargetResource
     return $true
 }
 
-function Check-IfDbExists([string]$databaseName, [string]$connectionString)
+function Check-IfDbExists
 {
+    [CmdletBinding()]
+    param
+    (
+        [Parameter()]
+        [string]
+        $databaseName,
+
+        [Parameter()]
+        [string]
+        $connectionString
+    )
+
     $connectionString = "$connectionString database=$databaseName;"
 
     $connection = New-Object system.Data.SqlClient.SqlConnection
@@ -142,13 +164,25 @@ function Check-IfDbExists([string]$databaseName, [string]$connectionString)
     return $true
 }
 
-function Construct-ConnectionString([string]$sqlServer, [System.Management.Automation.PSCredential]$credentials)
+function Construct-ConnectionString
 {
+    [CmdletBinding()]
+    param
+    (
+        [Parameter()]
+        [string]
+        $sqlServer,
+
+        [Parameter()]
+        [System.Management.Automation.PSCredential]
+        $credentials
+    )
+
     $uid = $credentials.UserName
     $pwd = $credentials.GetNetworkCredential().Password
     $server = "Server=$sqlServer;"
 
-    if($PSBoundParameters.ContainsKey('credentials'))
+    if ($PSBoundParameters.ContainsKey('credentials'))
     {
         $integratedSecurity = "Integrated Security=False;"
         $userName = "uid=$uid;pwd=$pwd;"
@@ -163,8 +197,28 @@ function Construct-ConnectionString([string]$sqlServer, [System.Management.Autom
     return $connectionString
 }
 
-function Extract-DacPacForDb([string]$connectionString, [string]$sqlServerVersion, [string]$databaseName, [string]$dacpacPath)
+function Extract-DacPacForDb
 {
+    [CmdletBinding()]
+    param
+    (
+        [Parameter()]
+        [string]
+        $connectionString,
+
+        [Parameter()]
+        [string]
+        $sqlServerVersion,
+
+        [Parameter()]
+        [string]
+        $databaseName,
+
+        [Parameter()]
+        [string]
+        $dacpacPath
+    )
+
     Load-DacFx -sqlserverVersion $sqlServerVersion
 
     $dacService = new-object Microsoft.SqlServer.Dac.DacServices($connectionString)
@@ -179,8 +233,28 @@ function Extract-DacPacForDb([string]$connectionString, [string]$sqlServerVersio
     }
 }
 
-function Import-BacPacForDb([string]$connectionString, [string]$sqlServerVersion, [string]$databaseName, [string]$bacpacPath)
+function Import-BacPacForDb
 {
+    [CmdletBinding()]
+    param
+    (
+        [Parameter()]
+        [string]
+        $connectionString,
+
+        [Parameter()]
+        [string]
+        $sqlServerVersion,
+
+        [Parameter()]
+        [string]
+        $databaseName,
+
+        [Parameter()]
+        [string]
+        $bacpacPath
+    )
+
     Write-Verbose "Importing bacpac"
 
     Load-DacFx -sqlserverVersion $sqlServerVersion
@@ -201,13 +275,21 @@ function Import-BacPacForDb([string]$connectionString, [string]$sqlServerVersion
     }
 }
 
-function Load-DacFx([string]$sqlserverVersion)
+function Load-DacFx
 {
+    [CmdletBinding()]
+    param
+    (
+        [Parameter()]
+        [string]
+        $sqlserverVersion
+    )
+
     $majorVersion = Get-SqlServerMajoreVersion -sqlServerVersion $sqlserverVersion
 
     $dacPathSuffix = "Microsoft SQL Server\$majorVersion\DAC\bin\Microsoft.SqlServer.Dac.dll"
 
-    if(Test-Path -Path "${env:ProgramFiles(x86)})\$dacPathSuffix")
+    if (Test-Path -Path "${env:ProgramFiles(x86)})\$dacPathSuffix")
     {
         $DacFxLocation = "${env:ProgramFiles(x86)}\$dacPathSuffix"
     }
@@ -217,15 +299,13 @@ function Load-DacFx([string]$sqlserverVersion)
     }
 
     try
-    {  
+    {
         [System.Reflection.Assembly]::LoadFrom($DacFxLocation) | Out-Null
     }
     catch
     {
-        Throw "Loading DacFx Failed"
+        throw "Loading DacFx Failed"
     }
 }
 
 Export-ModuleMember -Function *-TargetResource
-
-

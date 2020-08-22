@@ -7,24 +7,38 @@ SmoFxInstallationError=Please ensure that Smo is installed.
 '@
 }
 
-function CheckIfDbExists([string]$connectionString, [string]$databaseName)
+function CheckIfDbExists
 {
-    Write-Verbose("Inside CheckIfDbExists")
+    [CmdletBinding()]
+    param
+    (
+        [Parameter()]
+        [string]
+        $connectionString,
+
+        [Parameter()]
+        [string]
+        $databaseName
+    )
+
+    Write-Verbose -Message "Inside CheckIfDbExists"
+
     $connectionString = "$connectionString database=$databaseName;"
 
     $connection = New-Object system.Data.SqlClient.SqlConnection
 
     $connection.connectionstring = $connectionString
 
-    Write-Verbose($connectionString)
+    Write-Verbose -Message $connectionString
 
     try
     {
         $connection.Open()
     }
     catch
-    {  
-        Write-Verbose("Db does not exist")
+    {
+        Write-Verbose -Message "Db does not exist"
+
         return $false
     }
 
@@ -33,10 +47,37 @@ function CheckIfDbExists([string]$connectionString, [string]$databaseName)
     return $true
 }
 
-function DeployDac([string] $databaseName, [string]$connectionString, [string]$sqlserverVersion,
-                   [string]$dacpacPath, [string]$dacpacApplicationName, [string]$dacpacApplicationVersion)
+function DeployDac
 {
-    if($PSBoundParameters.ContainsKey('dacpacApplicationVersion'))
+    [CmdletBinding()]
+    param
+    (
+        [Parameter()]
+        [string]
+        $databaseName,
+
+        [Parameter()]
+        [string]
+        $connectionString,
+
+        [Parameter()]
+        [string]
+        $sqlserverVersion,
+
+        [Parameter()]
+        [string]
+        $dacpacPath,
+
+        [Parameter()]
+        [string]
+        $dacpacApplicationName,
+
+        [Parameter()]
+        [string]
+        $dacpacApplicationVersion
+    )
+
+    if ($PSBoundParameters.ContainsKey('dacpacApplicationVersion'))
     {
         $defaultDacPacApplicationVersion = $dacpacApplicationVersion
     }
@@ -51,7 +92,7 @@ function DeployDac([string] $databaseName, [string]$connectionString, [string]$s
     }
     catch
     {
-        Throw "$LocalizedData.DacFxInstallationError"
+        throw "$LocalizedData.DacFxInstallationError"
     }
 
     $dacServicesObject = new-object Microsoft.SqlServer.Dac.DacServices ($connectionString)
@@ -60,21 +101,33 @@ function DeployDac([string] $databaseName, [string]$connectionString, [string]$s
 
     try
     {
-        $dacServicesObject.Deploy($dacpacInstance, $databaseName,$true) 
+        $dacServicesObject.Deploy($dacpacInstance, $databaseName, $true)
 
-        $dacServicesObject.Register($databaseName, $dacpacApplicationName,$defaultDacPacApplicationVersion)
+        $dacServicesObject.Register($databaseName, $dacpacApplicationName, $defaultDacPacApplicationVersion)
 
-        Write-Verbose("Dac Deployed")
+        Write-Verbose -Message "Dac Deployed"
     }
     catch
     {
         $errorMessage = $_.Exception.Message
-        Write-Verbose('Dac Deploy Failed: ''{0}''' -f $errorMessage)
+        Write-Verbose -Message ('Dac Deploy Failed: ''{0}''' -f $errorMessage)
     }
 }
 
-function CreateDb([string] $databaseName, [string]$connectionString)
+function CreateDb
 {
+    [CmdletBinding()]
+    param
+    (
+        [Parameter()]
+        [string]
+        $databaseName,
+
+        [Parameter()]
+        [string]
+        $connectionString
+    )
+
     $sqlConnection = new-object system.data.SqlClient.SQLConnection($connectionString);
 
     $query = "if not exists(SELECT name FROM sys.databases WHERE name='$databaseName') BEGIN create database $databaseName END"
@@ -84,11 +137,27 @@ function CreateDb([string] $databaseName, [string]$connectionString)
     $sqlConnection.Close()
 }
 
-function DeleteDb([string] $databaseName, [string]$connectionString, [string]$sqlServerVersion)
+function DeleteDb
 {
+    [CmdletBinding()]
+    param
+    (
+        [Parameter()]
+        [string]
+        $databaseName,
+
+        [Parameter()]
+        [string]
+        $connectionString,
+
+        [Parameter()]
+        [string]
+        $sqlserverVersion
+    )
+
     <#
     Load-SmoAssembly -sqlserverVersion $sqlServerVersion
-    
+
     $smo = New-Object Microsoft.SqlServer.Management.Smo.Server $sqlConnection.DataSource
 
     $smo.KillAllProcesses($databaseName)
@@ -112,15 +181,28 @@ function DeleteDb([string] $databaseName, [string]$connectionString, [string]$sq
     $sqlConnection.Close()
 }
 
-function ExecuteSqlQuery([system.data.SqlClient.SQLConnection]$sqlConnection, [string]$SqlQuery)
+function ExecuteSqlQuery
 {
-    $sqlCommand = new-object system.data.sqlclient.sqlcommand($SqlQuery, $sqlConnection);
+    [CmdletBinding()]
+    [OutputType([System.Boolean])]
+    param
+    (
+        [Parameter()]
+        [System.Data.SqlClient.SQLConnection]
+        $sqlConnection,
+
+        [Parameter()]
+        [string]
+        $SqlQuery
+    )
+
+    $sqlCommand = new-object system.data.sqlclient.sqlcommand($SqlQuery, $sqlConnection)
 
     $sqlConnection.Open()
     $queryResult = $sqlCommand.ExecuteNonQuery()
     $sqlConnection.Close()
 
-    if ($queryResult  -ne -1)
+    if ($queryResult -ne -1)
     {
         return $true
     }
@@ -128,8 +210,20 @@ function ExecuteSqlQuery([system.data.SqlClient.SQLConnection]$sqlConnection, [s
     return $false
 }
 
-function ReturnSqlQuery([system.data.SqlClient.SQLConnection]$sqlConnection, [string]$SqlQuery)
+function ReturnSqlQuery
 {
+    [CmdletBinding()]
+    param
+    (
+        [Parameter()]
+        [System.Data.SqlClient.SQLConnection]
+        $sqlConnection,
+
+        [Parameter()]
+        [string]
+        $SqlQuery
+    )
+
     $sqlCommand = new-object system.data.sqlclient.sqlcommand($SqlQuery, $sqlConnection)
     $sqlAdapter = New-Object System.Data.SqlClient.SqlDataAdapter($sqlCommand)
     $dataSet = New-Object System.Data.DataSet
@@ -140,12 +234,13 @@ function ReturnSqlQuery([system.data.SqlClient.SQLConnection]$sqlConnection, [st
 
 function Get-DacPacDeployedVersion
 {
+    [CmdletBinding()]
     param
     (
         [Parameter(Mandatory = $true)]
         [string]
         $ConnectionString,
-        
+
         [Parameter(Mandatory = $true)]
         [string]
         $DbName
@@ -156,15 +251,26 @@ function Get-DacPacDeployedVersion
 
     $result = ReturnSqlQuery -SqlConnection $sqlConnection -SqlQuery $dacpacQueryString
 
-    return $result.Where({$_.DBName -eq $DBName}).DacPacVersion
+    return $result.Where( {$_.DBName -eq $DBName}).DacPacVersion
 }
 
-function Construct-ConnectionString([string]$sqlServer, [System.Management.Automation.PSCredential]$credentials)
+function Construct-ConnectionString
 {
-    
+    [CmdletBinding()]
+    param
+    (
+        [Parameter(Mandatory = $true)]
+        [string]
+        $sqlServer,
+
+        [Parameter(Mandatory = $true)]
+        [System.Management.Automation.PSCredential]
+        $credentials
+    )
+
     $server = "Server=$sqlServer;"
 
-    if($PSBoundParameters.ContainsKey('credentials'))
+    if ($PSBoundParameters.ContainsKey('credentials'))
     {
         $uid = $credentials.UserName
         $pwd = $credentials.GetNetworkCredential().Password
@@ -181,8 +287,28 @@ function Construct-ConnectionString([string]$sqlServer, [System.Management.Autom
     return $connectionString
 }
 
-function Perform-Restore([string]$DbName, [string]$connectionString, [string]$sqlserverVersion, [string]$bacpacFilePath)
+function Perform-Restore
 {
+    [CmdletBinding()]
+    param
+    (
+        [Parameter()]
+        [string]
+        $DbName,
+
+        [Parameter()]
+        [string]
+        $connectionString,
+
+        [Parameter()]
+        [string]
+        $sqlserverVersion,
+
+        [Parameter()]
+        [string]
+        $bacpacFilePath
+    )
+
     Load-DacFx -sqlserverVersion $sqlserverVersion
 
     $dacServiceInstance = new-object Microsoft.SqlServer.Dac.DacServices ($connectionString)
@@ -195,12 +321,20 @@ function Perform-Restore([string]$DbName, [string]$connectionString, [string]$sq
     }
     catch
     {
-        Throw "Restore Failed Exception: $_"
+        throw "Restore Failed Exception: $_"
     }
 }
 
-function Load-DacFx([string]$sqlserverVersion)
+function Load-DacFx
 {
+    [CmdletBinding()]
+    param
+    (
+        [Parameter()]
+        [string]
+        $sqlserverVersion
+    )
+
     $majorVersion = Get-SqlServerMajoreVersion -sqlServerVersion $sqlserverVersion
     
     $dacPathSuffix = "Microsoft SQL Server\$majorVersion\DAC\bin\Microsoft.SqlServer.Dac.dll"
@@ -216,17 +350,25 @@ function Load-DacFx([string]$sqlserverVersion)
     }
 
     try
-    {  
+    {
         [System.Reflection.Assembly]::LoadFrom($DacFxLocation) | Out-Null
     }
     catch
     {
-        Throw "$LocalizedData.DacFxInstallationError"
+        throw "$LocalizedData.DacFxInstallationError"
     }
 }
 
-function Load-SmoAssembly([string]$sqlserverVersion)
+function Load-SmoAssembly
 {
+    [CmdletBinding()]
+    param
+    (
+        [Parameter()]
+        [string]
+        $sqlserverVersion
+    )
+
     $majorVersion = Get-SqlServerMajoreVersion -sqlServerVersion $sqlserverVersion
 
     $smoPathSuffix = "Microsoft SQL Server\$majorVersion\SDK\Assemblies\Microsoft.SqlServer.Smo.dll"
@@ -241,18 +383,26 @@ function Load-SmoAssembly([string]$sqlserverVersion)
     }
 
     try
-    {  
+    {
         [System.Reflection.Assembly]::LoadFrom($SmoLocation) | Out-Null
     }
     catch
     {
-        Throw "$LocalizedData.SmoFxInstallationError"
+        throw "$LocalizedData.SmoFxInstallationError"
     }
 }
 
-function Get-SqlServerMajoreVersion([string]$sqlServerVersion)
+function Get-SqlServerMajoreVersion
 {
-    switch($sqlserverVersion)
+    [CmdletBinding()]
+    param
+    (
+        [Parameter()]
+        [string]
+        $sqlserverVersion
+    )
+
+    switch ($sqlserverVersion)
     {
         "2008-R2"
         {
@@ -283,21 +433,49 @@ function Get-SqlServerMajoreVersion([string]$sqlServerVersion)
     return $majorVersion
 }
 
-function Get-SqlDatabaseOwner([string]$DatabaseName, [string]$connectionString)
+function Get-SqlDatabaseOwner
 {
-   
+    [CmdletBinding()]
+    param
+    (
+        [Parameter()]
+        [string]
+        $DatabaseName,
+
+        [Parameter()]
+        [string]
+        $connectionString
+    )
+
     [string]$SqlQuery = "SELECT SUSER_SNAME(owner_sid) [OwnerName] FROM sys.databases where name = '$DatabaseName'"
 
     $sqlConnection = new-object system.data.SqlClient.SQLConnection($connectionString)
 
-
     return (ReturnSqlQuery -sqlConnection $sqlConnection -SqlQuery $SqlQuery).OwnerName
-            
- 
 }
 
-function Extract-DacPacForDb([string]$connectionString, [string]$sqlServerVersion, [string]$databaseName, [string]$dacpacPath)
+function Extract-DacPacForDb
 {
+    [CmdletBinding()]
+    param
+    (
+        [Parameter()]
+        [string]
+        $connectionString,
+
+        [Parameter()]
+        [string]
+        $sqlServerVersion,
+
+        [Parameter()]
+        [string]
+        $databaseName,
+
+        [Parameter()]
+        [string]
+        $dacpacPath
+    )
+
     Load-DacFx -sqlserverVersion $sqlServerVersion
 
     $dacService = new-object Microsoft.SqlServer.Dac.DacServices($connectionString)
@@ -312,17 +490,37 @@ function Extract-DacPacForDb([string]$connectionString, [string]$sqlServerVersio
     }
 }
 
-function Import-BacPacForDb([string]$connectionString, [string]$sqlServerVersion, [string]$databaseName, [string]$bacpacPath)
+function Import-BacPacForDb
 {
-    Write-Verbose "Importing bacpac"
+    [CmdletBinding()]
+    param
+    (
+        [Parameter()]
+        [string]
+        $connectionString,
+
+        [Parameter()]
+        [string]
+        $sqlServerVersion,
+
+        [Parameter()]
+        [string]
+        $databaseName,
+
+        [Parameter()]
+        [string]
+        $bacpacPath
+    )
+
+    Write-Verbose -Message "Importing bacpac"
 
     Load-DacFx -sqlserverVersion $sqlServerVersion
 
-    Write-Verbose $connectionString
+    Write-Verbose -Message $connectionString
 
     $dacServiceInstance = new-object Microsoft.SqlServer.Dac.DacServices ($connectionString)
 
-    Write-Verbose $dacServiceInstance
+    Write-Verbose -Message $dacServiceInstance
 
     try
     {

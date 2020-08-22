@@ -8,7 +8,7 @@ DacPacExtractionError=Extracting DacPac for Db failed, continuing with Dac Deplo
 '@
 }
 
-Import-Module -DisableNameChecking $PSScriptRoot\..\xDatabase_Common
+Import-Module -DisableNameChecking -Name $PSScriptRoot\..\..\Modules\xDatabase.Common
 
 function Get-TargetResource
 {
@@ -16,28 +16,32 @@ function Get-TargetResource
     [OutputType([System.Collections.Hashtable])]
     param
     (
+        [Parameter()]
         [System.Management.Automation.PSCredential]
         $Credentials,
 
-        [parameter(Mandatory = $true)]
-        [ValidateSet("Present","Absent")]
+        [Parameter(Mandatory = $true)]
+        [ValidateSet("Present", "Absent")]
         [System.String]
         $Ensure,
 
+        [Parameter()]
         [System.String]
         $SqlServer,
 
-        [parameter(Mandatory = $true)]
-        [ValidateSet("2008-R2","2012","2014","2016","2017","2019")]
+        [Parameter(Mandatory = $true)]
+        [ValidateSet("2008-R2", "2012", "2014", "2016", "2017", "2019")]
         [System.String]
         $SqlServerVersion,
 
-        [parameter(Mandatory = $true)]
+        [Parameter(Mandatory = $true)]
         [System.String]
         $DatabaseName
     )
 
-        if($PSBoundParameters.ContainsKey('Credentials'))
+    Write-Verbose -Message 'Getting current state.'
+
+    if ($PSBoundParameters.ContainsKey('Credentials'))
     {
         $ConnectionString = Construct-ConnectionString -sqlServer $SqlServer -credentials $Credentials
     }
@@ -47,12 +51,19 @@ function Get-TargetResource
     }
 
     $dbExists = CheckIfDbExists $ConnectionString $DatabaseName
-    $Ensure = if ($dbExists) { "Present" } else { "Absent" }
+    $Ensure = if ($dbExists)
+    {
+        "Present"
+    }
+    else
+    {
+        "Absent"
+    }
 
     $result = @{
-        Ensure = $Ensure
-        DatabaseName = $DatabaseName
-        SqlServer = $SqlServer
+        Ensure           = $Ensure
+        DatabaseName     = $DatabaseName
+        SqlServer        = $SqlServer
         SqlServerVersion = $SqlServerVersion
     }
     return $result
@@ -63,40 +74,48 @@ function Set-TargetResource
     [CmdletBinding()]
     param
     (
+        [Parameter()]
         [System.Management.Automation.PSCredential]
         $Credentials,
 
-        [parameter(Mandatory = $true)]
-        [ValidateSet("Present","Absent")]
+        [Parameter(Mandatory = $true)]
+        [ValidateSet("Present", "Absent")]
         [System.String]
         $Ensure,
 
+        [Parameter()]
         [System.String]
         $SqlServer,
 
-        [parameter(Mandatory = $true)]
-        [ValidateSet("2008-R2","2012","2014","2016","2017","2019")]
+        [Parameter(Mandatory = $true)]
+        [ValidateSet("2008-R2", "2012", "2014", "2016", "2017", "2019")]
         [System.String]
         $SqlServerVersion,
 
+        [Parameter()]
         [System.String]
         $BacPacPath,
 
-        [parameter(Mandatory = $true)]
+        [Parameter(Mandatory = $true)]
         [System.String]
         $DatabaseName,
 
+        [Parameter()]
         [System.String]
         $DacPacPath,
 
+        [Parameter()]
         [System.String]
         $DacPacApplicationName,
 
+        [Parameter()]
         [System.String]
         $DacPacApplicationVersion
     )
 
-    if($PSBoundParameters.ContainsKey('Credentials'))
+    Write-Verbose -Message 'Setting desired state.'
+
+    if ($PSBoundParameters.ContainsKey('Credentials'))
     {
         $ConnectionString = Construct-ConnectionString -sqlServer $SqlServer -credentials $Credentials
     }
@@ -105,18 +124,19 @@ function Set-TargetResource
         $ConnectionString = Construct-ConnectionString -sqlServer $SqlServer
     }
 
-    if($Ensure -eq "Present")
+    if ($Ensure -eq "Present")
     {
-        if($PSBoundParameters.ContainsKey('BacPacPath'))
+        if ($PSBoundParameters.ContainsKey('BacPacPath'))
         {
             Perform-Restore -DbName $DatabaseName -connectionString $ConnectionString -sqlserverVersion $SqlServerVersion -bacpacFilePath $BacPacPath
         }
-        elseif($PSBoundParameters.ContainsKey('DacPacPath'))
+        elseif ($PSBoundParameters.ContainsKey('DacPacPath'))
         {
-            if(!$PSBoundParameters.ContainsKey('DacPacApplicationName'))
+            if (-not $PSBoundParameters.ContainsKey('DacPacApplicationName'))
             {
-                Throw "Application Name Needed for DAC Registration, else upgrade is unsupported"
+                throw "Application Name Needed for DAC Registration, else upgrade is unsupported"
             }
+
             DeployDac -databaseName $DatabaseName -connectionString $ConnectionString -sqlserverVersion $SqlServerVersion -dacpacPath $DacPacPath -dacpacApplicationName $DacPacApplicationName -dacpacApplicationVersion $DacPacApplicationVersion
         }
         else
@@ -136,45 +156,53 @@ function Test-TargetResource
     [OutputType([System.Boolean])]
     param
     (
+        [Parameter()]
         [System.Management.Automation.PSCredential]
         $Credentials,
 
-        [parameter(Mandatory = $true)]
-        [ValidateSet("Present","Absent")]
+        [Parameter(Mandatory = $true)]
+        [ValidateSet("Present", "Absent")]
         [System.String]
         $Ensure,
 
+        [Parameter()]
         [System.String]
         $SqlServer,
 
-        [parameter(Mandatory = $true)]
-        [ValidateSet("2008-R2","2012","2014","2016","2017","2019")]
+        [Parameter(Mandatory = $true)]
+        [ValidateSet("2008-R2", "2012", "2014", "2016", "2017", "2019")]
         [System.String]
         $SqlServerVersion,
 
+        [Parameter()]
         [System.String]
         $BacPacPath,
 
-        [parameter(Mandatory = $true)]
+        [Parameter(Mandatory = $true)]
         [System.String]
         $DatabaseName,
 
+        [Parameter()]
         [System.String]
         $DacPacPath,
 
+        [Parameter()]
         [System.String]
         $DacPacApplicationName,
 
+        [Parameter()]
         [System.String]
         $DacPacApplicationVersion
     )
 
-    if($PSBoundParameters.ContainsKey('DacPacPath') -and $PSBoundParameters.ContainsKey('BacPacPath'))
+    Write-Verbose -Message 'Determine the current state.'
+
+    if ($PSBoundParameters.ContainsKey('DacPacPath') -and $PSBoundParameters.ContainsKey('BacPacPath'))
     {
         throw "Specify only one out of dacpac or bacpac"
     }
 
-    if($PSBoundParameters.ContainsKey('Credentials'))
+    if ($PSBoundParameters.ContainsKey('Credentials'))
     {
         $ConnectionString = Construct-ConnectionString -sqlServer $SqlServer -credentials $Credentials
     }
@@ -185,31 +213,31 @@ function Test-TargetResource
 
     $dbExists = CheckIfDbExists $ConnectionString $DatabaseName
 
-    if($Ensure -eq "Present")
+    if ($Ensure -eq "Present")
     {
-        if($PSBoundParameters.ContainsKey('BacPacPath'))
+        if ($PSBoundParameters.ContainsKey('BacPacPath'))
         {
-            if($dbExists)
+            if ($dbExists)
             {
                 return $true
             }
-  
+
             return $false
         }
-        if($dbExists -eq $false)
+        if ($dbExists -eq $false)
         {
             return $false
         }
-        if($dbExists -eq $true -and !$PSBoundParameters.ContainsKey('DacPacPath'))
+        if ($dbExists -eq $true -and !$PSBoundParameters.ContainsKey('DacPacPath'))
         {
             return $true
         }
         else
         {
-            if($DacPacApplicationVersion)
+            if ($DacPacApplicationVersion)
             {
                 $deployedVersion = Get-DacPacDeployedVersion -ConnectionString $ConnectionString -DbName $DatabaseName
-                if($deployedVersion -eq $DacPacApplicationVersion)
+                if ($deployedVersion -eq $DacPacApplicationVersion)
                 {
                     return $true
                 }
@@ -219,7 +247,7 @@ function Test-TargetResource
     }
     else
     {
-        if($dbExists)
+        if ($dbExists)
         {
             return $false
         }

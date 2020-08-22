@@ -10,7 +10,7 @@ data LocalizedData
 '@
 }
 
-Import-Module $PSScriptRoot\..\xDatabase_Common
+Import-Module -DisableNameChecking -Name $PSScriptRoot\..\..\Modules\xDatabase.Common
 
 function Get-TargetResource #Not yet working
 {
@@ -18,33 +18,36 @@ function Get-TargetResource #Not yet working
     [OutputType([System.Collections.Hashtable])]
     param
     (
-        
-        [ValidateSet("Present","Absent")]
+        [Parameter()]
+        [ValidateSet("Present", "Absent")]
         [System.String]
         $Ensure = "Present",
-        
-        [parameter(Mandatory = $true)]
+
+        [Parameter(Mandatory = $true)]
         [System.String]
         $LoginName,
 
+        [Parameter()]
         [System.String]
         $LoginPassword,
 
+        [Parameter()]
         [System.Management.Automation.PSCredential]
         $SqlConnectionCredential,
 
-        [parameter(Mandatory = $true)]
+        [Parameter(Mandatory = $true)]
         [string]
-        [ValidateSet("SQL","Windows")]
+        [ValidateSet("SQL", "Windows")]
         $SqlAuthType,
 
-        [parameter(Mandatory = $true)]
+        [Parameter(Mandatory = $true)]
         [System.String]
         $SqlServer
-
     )
 
-    if($SqlAuthType -eq "SQL")
+    Write-Verbose -Message 'Getting current state.'
+
+    if ($SqlAuthType -eq "SQL")
     {
         $ConnectionString = Construct-ConnectionString -sqlServer $SqlServer -credentials $SqlConnectionCredential
     }
@@ -53,24 +56,22 @@ function Get-TargetResource #Not yet working
         $ConnectionString = Construct-ConnectionString -sqlServer $SqlServer
     }
 
-    [string]$loginNameQuery = "SELECT * from sys.sql_logins where name='$LoginName'"
+    [string] $loginNameQuery = "SELECT * from sys.sql_logins where name='$LoginName'"
 
     $PresentValue = $false
 
-    if((ReturnSqlQuery -sqlConnection $connectionString -SqlQuery $loginNameQuery)[0] -gt 0)
+    if ((ReturnSqlQuery -sqlConnection $connectionString -SqlQuery $loginNameQuery)[0] -gt 0)
     {
         $PresentValue = $true
     }
 
-
     $returnValue = @{
-        Ensure = $PresentValue
+        Ensure    = $PresentValue
         LoginName = $LoginName
         SqlServer = $SqlServer
     }
 
     $returnValue
-
 }
 
 #TODO: handle absent case. example "DROP Login Toothy"
@@ -80,31 +81,36 @@ function Set-TargetResource
     [CmdletBinding()]
     param
     (
-        [ValidateSet("Present","Absent")]
+        [Parameter()]
+        [ValidateSet("Present", "Absent")]
         [System.String]
         $Ensure = "Present",
 
-        [parameter(Mandatory = $true)]
+        [Parameter(Mandatory = $true)]
         [System.String]
         $LoginName,
 
+        [Parameter()]
         [System.String]
         $LoginPassword,
-        
+
+        [Parameter()]
         [System.Management.Automation.PSCredential]
         $SqlConnectionCredential,
 
-        [parameter(Mandatory = $true)]
+        [Parameter(Mandatory = $true)]
         [string]
-        [ValidateSet("SQL","Windows")]
-        $SqlAuthType,        
-        
-        [parameter(Mandatory = $true)]
+        [ValidateSet("SQL", "Windows")]
+        $SqlAuthType,
+
+        [Parameter(Mandatory = $true)]
         [System.String]
         $SqlServer
     )
-    
-    if($SqlAuthType -eq "SQL")
+
+    Write-Verbose -Message 'Setting desired state.'
+
+    if ($SqlAuthType -eq "SQL")
     {
         $ConnectionString = Construct-ConnectionString -sqlServer $SqlServer -credentials $SqlConnectionCredential
     }
@@ -113,24 +119,24 @@ function Set-TargetResource
         $ConnectionString = Construct-ConnectionString -sqlServer $SqlServer
     }
 
-    if($Ensure -eq "Present")
+    if ($Ensure -eq "Present")
     {
         try
         {
             # Create login if it does not already exist.
-            [string]$SqlQuery = "if not exists(SELECT name FROM sys.sql_logins WHERE name='$LoginName') Begin create login $LoginName with password='$LoginPassword' END"
+            [string] $SqlQuery = "if not exists(SELECT name FROM sys.sql_logins WHERE name='$LoginName') Begin create login $LoginName with password='$LoginPassword' END"
 
             $supressReturn = ExecuteSqlQuery -sqlConnection $connectionString -SqlQuery $SqlQuery
 
-            Write-Verbose $($LocalizedData.CreateDatabaseLoginSuccess -f ${LoginName})
-        
+            Write-Verbose -Message $($LocalizedData.CreateDatabaseLoginSuccess -f ${LoginName})
+
         }
         catch
         {
             $errorId = "CreateDatabaseLogin";
             $errorCategory = [System.Management.Automation.ErrorCategory]::InvalidResult
             $errorMessage = $($LocalizedData.CreateDatabaseLoginError -f ${LoginName})
-            $exception = New-Object System.InvalidOperationException $errorMessage 
+            $exception = New-Object System.InvalidOperationException $errorMessage
             $errorRecord = New-Object System.Management.Automation.ErrorRecord $exception, $errorId, $errorCategory, $null
 
             $PSCmdlet.ThrowTerminatingError($errorRecord);
@@ -141,18 +147,18 @@ function Set-TargetResource
         try
         {
             # Create login if it does not already exist.
-            [string]$SqlQuery = "if exists(SELECT name FROM sys.sql_logins WHERE name='$LoginName') Begin DROP LOGIN $LoginName END"
+            [string] $SqlQuery = "if exists(SELECT name FROM sys.sql_logins WHERE name='$LoginName') Begin DROP LOGIN $LoginName END"
 
             $supressReturn = ExecuteSqlQuery -sqlConnection $connectionString -SqlQuery $SqlQuery
 
-            Write-Verbose $($LocalizedData.RemoveDatabaseLoginSuccess -f ${LoginName})
+            Write-Verbose -Message $($LocalizedData.RemoveDatabaseLoginSuccess -f ${LoginName})
         }
         catch
         {
             $errorId = "RemoveDatabaseLogin";
             $errorCategory = [System.Management.Automation.ErrorCategory]::InvalidResult
             $errorMessage = $($LocalizedData.RemoveDatabaseLoginError -f ${LoginName})
-            $exception = New-Object System.InvalidOperationException $errorMessage 
+            $exception = New-Object System.InvalidOperationException $errorMessage
             $errorRecord = New-Object System.Management.Automation.ErrorRecord $exception, $errorId, $errorCategory, $null
 
             $PSCmdlet.ThrowTerminatingError($errorRecord);
@@ -160,40 +166,44 @@ function Set-TargetResource
     }
 }
 
-
 function Test-TargetResource #Not yet working
 {
     [CmdletBinding()]
     [OutputType([System.Boolean])]
     param
     (
-        [ValidateSet("Present","Absent")]
+        [Parameter()]
+        [ValidateSet("Present", "Absent")]
         [System.String]
         $Ensure = "Present",
 
-        [parameter(Mandatory = $true)]
+        [Parameter(Mandatory = $true)]
         [System.String]
         $LoginName,
 
+        [Parameter()]
         [System.String]
         $LoginPassword,
 
+        [Parameter()]
         [System.Management.Automation.PSCredential]
         $SqlConnectionCredential,
 
-        [parameter(Mandatory = $true)]
+        [Parameter(Mandatory = $true)]
         [string]
-        [ValidateSet("SQL","Windows")]
-        $SqlAuthType,        
-       
-        [parameter(Mandatory = $true)]
+        [ValidateSet("SQL", "Windows")]
+        $SqlAuthType,
+
+        [Parameter(Mandatory = $true)]
         [System.String]
         $SqlServer
     )
 
+    Write-Verbose -Message 'Determine the current state.'
+
     try
     {
-        if($SqlAuthType -eq "SQL")
+        if ($SqlAuthType -eq "SQL")
         {
             $ConnectionString = Construct-ConnectionString -sqlServer $SqlServer -credentials $SqlConnectionCredential
         }
@@ -201,12 +211,12 @@ function Test-TargetResource #Not yet working
         {
             $ConnectionString = Construct-ConnectionString -sqlServer $SqlServer
         }
-        
-        [string]$SqlQuery = "SELECT * from sys.sql_logins where name='$LoginName'"
-        
+
+        [string] $SqlQuery = "SELECT * from sys.sql_logins where name='$LoginName'"
+
         $LoginsReturnedByQuery = (ReturnSqlQuery -sqlConnection $connectionString -SqlQuery $SqlQuery)[0]
 
-        if((($LoginsReturnedByQuery -gt 0) -and ($Ensure -eq "Present")) -or (($LoginsReturnedByQuery -eq 0) -and ($Ensure -eq "absent")))
+        if ((($LoginsReturnedByQuery -gt 0) -and ($Ensure -eq "Present")) -or (($LoginsReturnedByQuery -eq 0) -and ($Ensure -eq "absent")))
         {
             $result = $true
         }
@@ -216,24 +226,17 @@ function Test-TargetResource #Not yet working
         }
 
         return $result
-
     }
     catch
     {
         $errorId = "TestDatabaseLogin";
         $errorCategory = [System.Management.Automation.ErrorCategory]::InvalidResult
         $errorMessage = $($LocalizedData.TestDatabaseLoginError -f ${LoginName})
-        $exception = New-Object System.InvalidOperationException $errorMessage 
+        $exception = New-Object System.InvalidOperationException $errorMessage
         $errorRecord = New-Object System.Management.Automation.ErrorRecord $exception, $errorId, $errorCategory, $null
 
         $PSCmdlet.ThrowTerminatingError($errorRecord);
     }
-
 }
 
-
 Export-ModuleMember -Function *-TargetResource
-
-
-
-

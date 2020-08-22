@@ -1,15 +1,13 @@
 # xDatabase
 
+The **xDatabase** module contains the **xDatabase**, **xDatabaseLogin**,
+**xDatabaseServer**, and  **xDBPackage** resources.
+
 [![Build Status](https://dev.azure.com/dsccommunity/xDatabase/_apis/build/status/dsccommunity.xDatabase?branchName=master)](https://dev.azure.com/dsccommunity/xDatabase/_build/latest?definitionId={definitionId}&branchName=master)
 ![Azure DevOps coverage (branch)](https://img.shields.io/azure-devops/coverage/dsccommunity/xDatabase/{definitionId}/master)
 [![Azure DevOps tests](https://img.shields.io/azure-devops/tests/dsccommunity/xDatabase/{definitionId}/master)](https://dsccommunity.visualstudio.com/xDatabase/_test/analytics?definitionId={definitionId}&contextType=build)
 [![PowerShell Gallery (with prereleases)](https://img.shields.io/powershellgallery/vpre/xDatabase?label=xDatabase%20Preview)](https://www.powershellgallery.com/packages/xDatabase/)
 [![PowerShell Gallery](https://img.shields.io/powershellgallery/v/xDatabase?label=xDatabase)](https://www.powershellgallery.com/packages/xDatabase/)
-
-The **xDatabase** module contains the **xDatabase**, **xDatabaseLogin**,
-**xDatabaseServer**, and  **xDBPackage** resources.
-
-For information on Data-Tier Applications please refer to [http://technet.microsoft.com/en-us/library/ee240739(v=sql.105).aspx](http://technet.microsoft.com/en-us/library/ee240739(v=sql.105).aspx).
 
 ## Code of Conduct
 
@@ -26,7 +24,22 @@ full release to [PowerShell Gallery](https://www.powershellgallery.com/).
 
 Please check out common DSC Community [contributing guidelines](https://dsccommunity.org/guidelines/contributing).
 
+## Change log
+
+A full list of changes in each version can be found in the [change log](CHANGELOG.md).
+
+## Documentation
+
+Please se the section [Resources](#resources).
+
+### Examples
+
+You can review the [Examples](/source/Examples) directory in the repository
+for some general use scenarios for all of the resources that are in the module.
+
 ## Resources
+
+For information on Data-Tier Applications please refer to [Understanding Data-tier Applications](https://docs.microsoft.com/en-us/previous-versions/sql/sql-server-2008-r2/ee240739(v=sql.105)).
 
 - **xDatabase** handles creation/deletion of a database using a dacpac
   or SQL connection string.
@@ -73,175 +86,3 @@ _Not yet written_.
   a database to a bacpac or extract a db to a dacpac respectively.
 - **Type**: This property can take the following values for dacpac extraction
   and bacpac export: { DACPAC | BACPAC }
-
-## Examples
-
-### Deploy a Database using DacPac
-
-This configuration will deploy the database with the schema specified in the dacpac.
-If the db exists, the new schema will be deployed.
-
-```powershell
-configuration DacDeploy
-{
-    param
-    (
-        [Parameter(Mandatory)]
-        [ValidateNotNullOrEmpty()]
-        [String]$Ensure,
-
-        [Parameter(Mandatory)]
-        [ValidateNotNullOrEmpty()]
-        [String]$DatabaseName,
-
-        [Parameter(Mandatory)]
-        [ValidateNotNullOrEmpty()]
-        [String]$SqlServer,
-
-        [Parameter(Mandatory)]
-        [ValidateNotNullOrEmpty()]
-        [String]$SqlServerVersion,
-
-        [String]$DacPacPath,
-
-        [String]$BacPacPath,
-
-        [Parameter(Mandatory)]
-        [ValidateNotNullOrEmpty()]
-        [String]$NodeName,
-
-        [PSCredential]
-        $Credentials,
-
-        [string]$DacPacApplicationName
-
-    )
-
-    Node ‘NodeName’
-    {
-        xDatabase DeployDac
-        {
-            Ensure = $Ensure
-            SqlServer = $SqlServer
-            SqlServerVersion = $SqlServerVersion
-            DatabaseName = $DatabaseName
-            Credentials = $Credentials
-            DacPacPath =  $DacPacPath
-            DacPacApplicationName = $DacPacApplicationName
-
-        }
-
-    }
-```
-
-### Deploy Database using BACPAC
-
-This configuration will deploy the database with the schema and data specified
-in the bacpac. If the database exists, no action is taken.
-
-```powershell
-configuration BacPacDeploy
-{
-    param
-    (
-        [Parameter(Mandatory)]
-        [ValidateNotNullOrEmpty()]
-        [String]$Ensure,
-
-        [Parameter(Mandatory)]
-        [ValidateNotNullOrEmpty()]
-        [String]$DatabaseName,
-
-        [Parameter(Mandatory)]
-        [ValidateNotNullOrEmpty()]
-        [String]$SqlServer,
-
-        [Parameter(Mandatory)]
-        [ValidateNotNullOrEmpty()]
-        [String]$SqlServerVersion,
-
-        [String]$DacPacPath,
-
-        [String]$BacPacPath,
-
-        [Parameter(Mandatory)]
-        [ValidateNotNullOrEmpty()]
-        [String]$NodeName,
-
-        [PSCredential]
-        $Credentials,
-
-        [string]$DacPacApplicationName
-
-    )
-
-    Node ‘NodeName’
-    {
-        xDatabase DeployBacPac
-        {
-            Ensure = $Ensure
-            SqlServer = $SqlServer
-            SqlServerVersion = $SqlServerVersion
-            DatabaseName = $DatabaseName
-            Credentials = $Credentials
-            BacPacPath = $BacPacPath
-        }
-    }
-}
-```
-
-### Deploy Database without BACPAC or DACPAC
-
-This configuration will create a database when neither a .dacpac nor a
-.bacpac is specified.
-
-```powershell
-configuration DbDeploy
-{
-    param
-    (
-        [Parameter(Mandatory)]
-        [ValidateNotNullOrEmpty()]
-        [String]$Ensure,
-
-        [Parameter(Mandatory)]
-        [ValidateNotNullOrEmpty()]
-        [String]$DatabaseName,
-
-        [Parameter(Mandatory)]
-        [ValidateNotNullOrEmpty()]
-        [String]$SqlServer,
-
-        [Parameter(Mandatory)]
-        [ValidateNotNullOrEmpty()]
-        [String]$SqlServerVersion,
-
-        [String]$DacPacPath,
-
-        [String]$BacPacPath,
-
-        [Parameter(Mandatory)]
-        [ValidateNotNullOrEmpty()]
-        [String]$NodeName,
-
-        [PSCredential]
-        $Credentials,
-
-        [string]$DacPacApplicationName
-
-    )
-
-    Node ‘NodeName’
-    {
-        xDatabase DeployDatabase
-
-        {
-            Ensure = $Ensure
-            SqlServer = $SqlServer
-            SqlServerVersion = $SqlServerVersion
-            DatabaseName = $DatabaseName
-            Credentials = $Credentials
-        }
-    }
-}
-```
