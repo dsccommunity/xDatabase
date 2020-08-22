@@ -3,9 +3,9 @@
 The **xDatabase** module contains the **xDatabase**, **xDatabaseLogin**,
 **xDatabaseServer**, and  **xDBPackage** resources.
 
-[![Build Status](https://dev.azure.com/dsccommunity/xDatabase/_apis/build/status/dsccommunity.xDatabase?branchName=master)](https://dev.azure.com/dsccommunity/xDatabase/_build/latest?definitionId={definitionId}&branchName=master)
-![Azure DevOps coverage (branch)](https://img.shields.io/azure-devops/coverage/dsccommunity/xDatabase/{definitionId}/master)
-[![Azure DevOps tests](https://img.shields.io/azure-devops/tests/dsccommunity/xDatabase/{definitionId}/master)](https://dsccommunity.visualstudio.com/xDatabase/_test/analytics?definitionId={definitionId}&contextType=build)
+[![Build Status](https://dev.azure.com/dsccommunity/xDatabase/_apis/build/status/dsccommunity.xDatabase?branchName=master)](https://dev.azure.com/dsccommunity/xDatabase/_build/latest?definitionId=45&branchName=master)
+![Azure DevOps coverage (branch)](https://img.shields.io/azure-devops/coverage/dsccommunity/xDatabase/45/master)
+[![Azure DevOps tests](https://img.shields.io/azure-devops/tests/dsccommunity/xDatabase/45/master)](https://dsccommunity.visualstudio.com/xDatabase/_test/analytics?definitionId=45&contextType=build)
 [![PowerShell Gallery (with prereleases)](https://img.shields.io/powershellgallery/vpre/xDatabase?label=xDatabase%20Preview)](https://www.powershellgallery.com/packages/xDatabase/)
 [![PowerShell Gallery](https://img.shields.io/powershellgallery/v/xDatabase?label=xDatabase)](https://www.powershellgallery.com/packages/xDatabase/)
 
