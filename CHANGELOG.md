@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- Updated to a new CI/CD pipeline.
+- Updated to a new CI/CD pipeline ([issue #47](https://github.com/dsccommunity/xDatabase/issues/47)).
 - Adds support for SQL Server 2019,
 - Add support for 64bit DAC and SMO ([issue #46](https://github.com/dsccommunity/xDatabase/issues/46)).
 
