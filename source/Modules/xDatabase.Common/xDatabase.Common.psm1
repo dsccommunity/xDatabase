@@ -259,11 +259,11 @@ function Construct-ConnectionString
     [CmdletBinding()]
     param
     (
-        [Parameter(Mandatory = $true)]
+        [Parameter()]
         [string]
         $sqlServer,
 
-        [Parameter(Mandatory = $true)]
+        [Parameter()]
         [System.Management.Automation.PSCredential]
         $credentials
     )
