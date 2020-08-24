@@ -51,10 +51,8 @@ This property can take the following values: { 2008-R2 | 2012 | 2014 | 2016 | 20
 * Update appveyor.yml to use the default template.
 * Added default template files .codecov.yml, .gitattributes, and .gitignore, and
   .vscode folder.
-
-### 1.10.0.0
-
-* Added support for SQL Server 2019
+* Adds support for SQL Server 2019,
+* Add support for 64bit DAC and SMO ([issue #46](https://github.com/dsccommunity/xDatabase/issues/46)).
 
 ### 1.9.0.0
 
