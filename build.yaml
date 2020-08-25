@@ -27,7 +27,6 @@ BuildWorkflow:
   publish:
     - Publish_Release_To_GitHub
     - Publish_Module_To_gallery
-    - Publish_GitHub_Wiki_Content
 
 ####################################################
 #           ModuleBuilder Configuration            #
