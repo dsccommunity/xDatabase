@@ -205,13 +205,15 @@ function Load-DacFx([string]$sqlserverVersion)
 {
     $majorVersion = Get-SqlServerMajoreVersion -sqlServerVersion $sqlserverVersion
 
-    if(Test-Path -Path "${env:ProgramFiles(x86)})\Microsoft SQL Server\$majorVersion\DAC\bin\Microsoft.SqlServer.Dac.dll")
+    $dacPathSuffix = "Microsoft SQL Server\$majorVersion\DAC\bin\Microsoft.SqlServer.Dac.dll"
+
+    if(Test-Path -Path "${env:ProgramFiles(x86)})\$dacPathSuffix")
     {
-        $DacFxLocation = "${env:ProgramFiles(x86)}\Microsoft SQL Server\$majorVersion\DAC\bin\Microsoft.SqlServer.Dac.dll"
+        $DacFxLocation = "${env:ProgramFiles(x86)}\$dacPathSuffix"
     }
     else
     {
-        $DacFxLocation = "$env:ProgramFiles\Microsoft SQL Server\$majorVersion\DAC\bin\Microsoft.SqlServer.Dac.dll"
+        $DacFxLocation = "$env:ProgramFiles\$dacPathSuffix"
     }
 
     try
