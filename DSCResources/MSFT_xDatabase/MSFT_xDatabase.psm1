@@ -28,7 +28,7 @@ function Get-TargetResource
         $SqlServer,
 
         [parameter(Mandatory = $true)]
-        [ValidateSet("2008-R2","2012","2014","2016","2017")]
+        [ValidateSet("2008-R2","2012","2014","2016","2017","2019")]
         [System.String]
         $SqlServerVersion,
 
@@ -75,7 +75,7 @@ function Set-TargetResource
         $SqlServer,
 
         [parameter(Mandatory = $true)]
-        [ValidateSet("2008-R2","2012","2014","2016","2017")]
+        [ValidateSet("2008-R2","2012","2014","2016","2017","2019")]
         [System.String]
         $SqlServerVersion,
 
@@ -148,7 +148,7 @@ function Test-TargetResource
         $SqlServer,
 
         [parameter(Mandatory = $true)]
-        [ValidateSet("2008-R2","2012","2014","2016","2017")]
+        [ValidateSet("2008-R2","2012","2014","2016","2017","2019")]
         [System.String]
         $SqlServerVersion,
 
