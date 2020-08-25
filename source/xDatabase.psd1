@@ -18,7 +18,7 @@
     Description          = 'This module contains 2 resources. xDatabase allows to create and deploy databases using DAC or connection string, restore a database using BACPAC and delete a database. The xDBPackage resource allows extracting a database to a DACPAC or exporting to a BACPAC'
 
     # Minimum version of the PowerShell engine required by this module
-    PowerShellVersion    = '5.1'
+    PowerShellVersion    = '4.0'
 
     # Functions to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no functions to export.
     FunctionsToExport    = @()
