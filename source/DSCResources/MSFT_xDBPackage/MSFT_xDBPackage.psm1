@@ -285,7 +285,7 @@ function Load-DacFx
         $sqlserverVersion
     )
 
-    $majorVersion = Get-SqlServerMajoreVersion -sqlServerVersion $sqlserverVersion
+    $majorVersion = Get-SqlServerMajorVersion -sqlServerVersion $sqlserverVersion
 
     $dacPathSuffix = "Microsoft SQL Server\$majorVersion\DAC\bin\Microsoft.SqlServer.Dac.dll"
 

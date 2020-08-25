@@ -335,10 +335,9 @@ function Load-DacFx
         $sqlserverVersion
     )
 
-    $majorVersion = Get-SqlServerMajoreVersion -sqlServerVersion $sqlserverVersion
-    
-    $dacPathSuffix = "Microsoft SQL Server\$majorVersion\DAC\bin\Microsoft.SqlServer.Dac.dll"
+    $majorVersion = Get-SqlServerMajorVersion -sqlServerVersion $sqlserverVersion
 
+    $dacPathSuffix = "Microsoft SQL Server\$majorVersion\DAC\bin\Microsoft.SqlServer.Dac.dll"
 
     if(Test-Path -Path "${env:ProgramFiles(x86)}\$dacPathSuffix")
     {
@@ -369,7 +368,7 @@ function Load-SmoAssembly
         $sqlserverVersion
     )
 
-    $majorVersion = Get-SqlServerMajoreVersion -sqlServerVersion $sqlserverVersion
+    $majorVersion = Get-SqlServerMajorVersion -sqlServerVersion $sqlserverVersion
 
     $smoPathSuffix = "Microsoft SQL Server\$majorVersion\SDK\Assemblies\Microsoft.SqlServer.Smo.dll"
 
@@ -392,7 +391,7 @@ function Load-SmoAssembly
     }
 }
 
-function Get-SqlServerMajoreVersion
+function Get-SqlServerMajorVersion
 {
     [CmdletBinding()]
     param
@@ -408,22 +407,27 @@ function Get-SqlServerMajoreVersion
         {
             $majorVersion = 100
         }
+
         "2012"
         {
             $majorVersion = 110
         }
+
         "2014"
         {
             $majorVersion = 120
         }
+
         "2016"
         {
             $majorVersion = 130
         }
+
         "2017"
         {
             $majorVersion = 140
         }
+
         "2019"
         {
             $majorVersion = 150

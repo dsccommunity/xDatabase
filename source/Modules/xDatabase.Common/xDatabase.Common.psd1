@@ -31,7 +31,7 @@
         'Extract-DacPacForDb'
         'Get-DacPacDeployedVersion'
         'Get-SqlDatabaseOwner'
-        'Get-SqlServerMajoreVersion'
+        'Get-SqlServerMajorVersion'
         'Import-BacPacForDb'
         'Load-DacFx'
         'Load-SmoAssembly'
