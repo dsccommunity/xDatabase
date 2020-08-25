@@ -202,8 +202,18 @@ function Perform-Restore([string]$DbName, [string]$connectionString, [string]$sq
 function Load-DacFx([string]$sqlserverVersion)
 {
     $majorVersion = Get-SqlServerMajoreVersion -sqlServerVersion $sqlserverVersion
+    
+    $dacPathSuffix = "Microsoft SQL Server\$majorVersion\DAC\bin\Microsoft.SqlServer.Dac.dll"
 
-    $DacFxLocation = "${env:ProgramFiles(x86)}\Microsoft SQL Server\$majorVersion\DAC\bin\Microsoft.SqlServer.Dac.dll"
+
+    if(Test-Path -Path "${env:ProgramFiles(x86)}\$dacPathSuffix")
+    {
+        $DacFxLocation = "${env:ProgramFiles(x86)}\$dacPathSuffix"
+    }
+    else
+    {
+        $DacFxLocation = "$env:ProgramFiles\$dacPathSuffix"
+    }
 
     try
     {  
@@ -219,7 +229,17 @@ function Load-SmoAssembly([string]$sqlserverVersion)
 {
     $majorVersion = Get-SqlServerMajoreVersion -sqlServerVersion $sqlserverVersion
 
-    $SmoLocation = "${env:ProgramFiles(x86)}\Microsoft SQL Server\$majorVersion\SDK\Assemblies\Microsoft.SqlServer.Smo.dll"
+    $smoPathSuffix = "Microsoft SQL Server\$majorVersion\SDK\Assemblies\Microsoft.SqlServer.Smo.dll"
+
+    if(Test-Path -Path "${env:ProgramFiles(x86)}\$smoPathSuffix")
+    {
+        $SmoLocation = "${env:ProgramFiles(x86)}\$smoPathSuffix"
+    }
+    else
+    {
+        $SmoLocation = "$env:ProgramFiles\$smoPathSuffix"
+    }
+
     try
     {  
         [System.Reflection.Assembly]::LoadFrom($SmoLocation) | Out-Null
@@ -253,6 +273,10 @@ function Get-SqlServerMajoreVersion([string]$sqlServerVersion)
         "2017"
         {
             $majorVersion = 140
+        }
+        "2019"
+        {
+            $majorVersion = 150
         }
     }
 

@@ -23,7 +23,7 @@ function Get-TargetResource
         $Type,
 
         [parameter(Mandatory = $true)]
-        [ValidateSet("2008-R2","2012","2014","2016","2017")]
+        [ValidateSet("2008-R2","2012","2014","2016","2017","2019")]
         [System.String]
         $SqlServerVersion
     )
@@ -55,7 +55,7 @@ function Set-TargetResource
         $Type,
 
         [parameter(Mandatory = $true)]
-        [ValidateSet("2008-R2","2012","2014","2016","2017")]
+        [ValidateSet("2008-R2","2012","2014","2016","2017","2019")]
         [System.String]
         $SqlServerVersion
     )
@@ -103,7 +103,7 @@ function Test-TargetResource
         $Type,
 
         [parameter(Mandatory = $true)]
-        [ValidateSet("2008-R2","2012","2014","2016","2017")]
+        [ValidateSet("2008-R2","2012","2014","2016","2017","2019")]
         [System.String]
         $SqlServerVersion
     )
@@ -205,7 +205,16 @@ function Load-DacFx([string]$sqlserverVersion)
 {
     $majorVersion = Get-SqlServerMajoreVersion -sqlServerVersion $sqlserverVersion
 
-    $DacFxLocation = "${env:ProgramFiles(x86)}\Microsoft SQL Server\$majorVersion\DAC\bin\Microsoft.SqlServer.Dac.dll"
+    $dacPathSuffix = "Microsoft SQL Server\$majorVersion\DAC\bin\Microsoft.SqlServer.Dac.dll"
+
+    if(Test-Path -Path "${env:ProgramFiles(x86)})\$dacPathSuffix")
+    {
+        $DacFxLocation = "${env:ProgramFiles(x86)}\$dacPathSuffix"
+    }
+    else
+    {
+        $DacFxLocation = "$env:ProgramFiles\$dacPathSuffix"
+    }
 
     try
     {  
