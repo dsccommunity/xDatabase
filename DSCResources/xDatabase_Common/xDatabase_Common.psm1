@@ -202,15 +202,17 @@ function Perform-Restore([string]$DbName, [string]$connectionString, [string]$sq
 function Load-DacFx([string]$sqlserverVersion)
 {
     $majorVersion = Get-SqlServerMajoreVersion -sqlServerVersion $sqlserverVersion
+    
+    $dacPathSuffix = "Microsoft SQL Server\$majorVersion\DAC\bin\Microsoft.SqlServer.Dac.dll"
 
 
-    if(Test-Path -Path "${env:ProgramFiles(x86)})\Microsoft SQL Server\$majorVersion\DAC\bin\Microsoft.SqlServer.Dac.dll")
+    if(Test-Path -Path "${env:ProgramFiles(x86)}\$dacPathSuffix")
     {
-        $DacFxLocation = "${env:ProgramFiles(x86)}\Microsoft SQL Server\$majorVersion\DAC\bin\Microsoft.SqlServer.Dac.dll"
+        $DacFxLocation = "${env:ProgramFiles(x86)}\$dacPathSuffix"
     }
     else
     {
-        $DacFxLocation = "$env:ProgramFiles\Microsoft SQL Server\$majorVersion\DAC\bin\Microsoft.SqlServer.Dac.dll"
+        $DacFxLocation = "$env:ProgramFiles\$dacPathSuffix"
     }
 
     try
@@ -227,13 +229,15 @@ function Load-SmoAssembly([string]$sqlserverVersion)
 {
     $majorVersion = Get-SqlServerMajoreVersion -sqlServerVersion $sqlserverVersion
 
-    if(Test-Path -Path "${env:ProgramFiles(x86)}\Microsoft SQL Server\$majorVersion\SDK\Assemblies\Microsoft.SqlServer.Smo.dll")
+    $smoPathSuffix = "Microsoft SQL Server\$majorVersion\SDK\Assemblies\Microsoft.SqlServer.Smo.dll"
+
+    if(Test-Path -Path "${env:ProgramFiles(x86)}\$smoPathSuffix")
     {
-        $SmoLocation = "${env:ProgramFiles(x86)}\Microsoft SQL Server\$majorVersion\SDK\Assemblies\Microsoft.SqlServer.Smo.dll"
+        $SmoLocation = "${env:ProgramFiles(x86)}\$smoPathSuffix"
     }
     else
     {
-        $SmoLocation = "$env:ProgramFiles\Microsoft SQL Server\$majorVersion\SDK\Assemblies\Microsoft.SqlServer.Smo.dll"
+        $SmoLocation = "$env:ProgramFiles\$smoPathSuffix"
     }
 
     try
