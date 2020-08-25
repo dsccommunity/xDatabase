@@ -1,266 +1,88 @@
-[![Build status](https://ci.appveyor.com/api/projects/status/oidqwkp7ljqoefd3/branch/master?svg=true)](https://ci.appveyor.com/project/PowerShell/xdatabase/branch/master)
-
 # xDatabase
 
-The **xDatabase** module contains the **xDatabase** and **xDBPackage** resources.
-**xDatabase** handles creation/deletion of a database using a dacpac or SQL connection string.
-**xDBPackage** allows extraction of a dacpac or import of a bacpac from a database.
-For information on Data-Tier Applications please refer to [http://technet.microsoft.com/en-us/library/ee240739(v=sql.105).aspx](http://technet.microsoft.com/en-us/library/ee240739(v=sql.105).aspx).
+The **xDatabase** module contains the **xDatabase**, **xDatabaseLogin**,
+**xDatabaseServer**, and  **xDBPackage** resources.
 
-This project has adopted the [Microsoft Open Source Code of Conduct](https://opensource.microsoft.com/codeofconduct/).
-For more information see the [Code of Conduct FAQ](https://opensource.microsoft.com/codeofconduct/faq/) or contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additional questions or comments.
+[![Build Status](https://dev.azure.com/dsccommunity/xDatabase/_apis/build/status/dsccommunity.xDatabase?branchName=master)](https://dev.azure.com/dsccommunity/xDatabase/_build/latest?definitionId=45&branchName=master)
+![Azure DevOps coverage (branch)](https://img.shields.io/azure-devops/coverage/dsccommunity/xDatabase/45/master)
+[![Azure DevOps tests](https://img.shields.io/azure-devops/tests/dsccommunity/xDatabase/45/master)](https://dsccommunity.visualstudio.com/xDatabase/_test/analytics?definitionId=45&contextType=build)
+[![PowerShell Gallery (with prereleases)](https://img.shields.io/powershellgallery/vpre/xDatabase?label=xDatabase%20Preview)](https://www.powershellgallery.com/packages/xDatabase/)
+[![PowerShell Gallery](https://img.shields.io/powershellgallery/v/xDatabase?label=xDatabase)](https://www.powershellgallery.com/packages/xDatabase/)
+
+## Code of Conduct
+
+This project has adopted this [Code of Conduct](CODE_OF_CONDUCT.md).
+
+## Releases
+
+For each merge to the branch `master` a preview release will be
+deployed to [PowerShell Gallery](https://www.powershellgallery.com/).
+Periodically a release version tag will be pushed which will deploy a
+full release to [PowerShell Gallery](https://www.powershellgallery.com/).
 
 ## Contributing
 
-Please check out common DSC Resources [contributing guidelines](https://github.com/PowerShell/DscResource.Kit/blob/master/CONTRIBUTING.md).
+Please check out common DSC Community [contributing guidelines](https://dsccommunity.org/guidelines/contributing).
+
+## Change log
+
+A full list of changes in each version can be found in the [change log](CHANGELOG.md).
+
+## Documentation
+
+Please se the section [Resources](#resources).
+
+### Examples
+
+You can review the [Examples](/source/Examples) directory in the repository
+for some general use scenarios for all of the resources that are in the module.
 
 ## Resources
 
-* **xDatabase** handles creation/deletion ofa database using a dacpac or sql connection string.
-* **xDBPackage** allows extraction of a dacpac or import of a bacpac from a database.
+For information on Data-Tier Applications please refer to [Understanding Data-tier Applications](https://docs.microsoft.com/en-us/previous-versions/sql/sql-server-2008-r2/ee240739(v=sql.105)).
+
+- **xDatabase** handles creation/deletion of a database using a dacpac
+  or SQL connection string.
+- **xDatabaseLogin** _not yet written._.
+- **xDatabaseServer** _not yet written._.
+- **xDBPackage** allows extraction of a dacpac or import of a bacpac from
+  a database.
 
 ### xDatabase
 
-* **Credentials**: The credential to connect to the SQL server.
-* **SqlServer**: The SQL server.
-* **SqlServerVersion**: The version of the SQL Server.
-This property can take the following values: { 2008-R2 | 2012 | 2014 | 2016 | 2017 }
-* **BacPacPath**: The path to the .bacpac file to be used for database restore
-If this is used, the DacPacPath (see below) cannot be specified.
-* **DacPacPath**: The path to the .dacpac file to be used for database schema deploy.
-If this is used, the BacPacPath (see above) cannot be specified.
-* **DacPacApplicationName**: For deploying a database using .dacpac file, an application name with which the dacpac is registered.
-This is needed to support database upgrade using .dacpac files.
-This must specified if DacPacPath is provided.
-* **DacPacApplicationVersion**: This is an optional parameter needed for registration for database deployment using .dacpac files for dacpac registration.
-* **DatabaseName**: The name of the database to be deployed.
+- **Credentials**: The credential to connect to the SQL server.
+- **SqlServer**: The SQL server.
+- **SqlServerVersion**: The version of the SQL Server.
+  This property can take the following values:
+  { 2008-R2 | 2012 | 2014 | 2016 | 2017 | 2019 }
+- **BacPacPath**: The path to the .bacpac file to be used for database restore
+  If this is used, the DacPacPath (see below) cannot be specified.
+- **DacPacPath**: The path to the .dacpac file to be used for database schema deploy.
+  If this is used, the BacPacPath (see above) cannot be specified.
+- **DacPacApplicationName**: For deploying a database using .dacpac file,
+  an application name with which the dacpac is registered.
+  This is needed to support database upgrade using .dacpac files.
+  This must specified if DacPacPath is provided.
+- **DacPacApplicationVersion**: This is an optional parameter needed for
+  registration for database deployment using .dacpac files for dacpac registration.
+- **DatabaseName**: The name of the database to be deployed.
+
+### xDatabaseLogin
+
+_Not yet written_.
+
+### xDatabaseServer
+
+_Not yet written_.
 
 ### xDBPackage
 
-* **DatabaseName**: The name of the database to be deployed.
-* **SqlServer**: The SQL server.
-* **SqlServerVersion**: The version of the SQL Server.
-This property can take the following values: { 2008-R2 | 2012 | 2014 | 2016 | 2017 }
-* **Path**: The path to the .bacpac or .dacpac file to be used to export a database to a bacpac or extract a db to a dacpac respectively.
-* **Type**: This property can take the following values for dacpac extraction and bacpac export: { DACPAC | BACPAC }
-
-## Versions
-
-### Unreleased
-
-### 1.9.0.0
-
-* xDatabase Test-TargetResource will now check DacPacVersion if DacPacPath parameter and DB exist. If the DacPacApplicationVersion is supplied and matches the deployed version we will return $true. ([issue #41](https://github.com/PowerShell/xDatabase/issues/41))
-
-### 1.8.0.0
-
-* Added support for SQL Server 2017
-* xDBPackage now uses the shared function to identify the paths for the different SQL server versions
-
-### 1.7.0.0
-
-* Added support SQL Server 2016
-
-### 1.6.0.0
-
-* Moved internal functions to a common helper module
-
-### 1.5.0.0
-
-* Converted appveyor.yml to install Pester from PSGallery instead of from Chocolatey.
-* Added logging for when dac deploy fails
-
-### 1.4.0.0
-
-* Error output improvements
-
-### 1.3.0.0
-
-* Fixed mandatory attributes in schema
-* Removed parameter DefaultDatabaseName
-* Alligned *.schema.mof with *.psm1 files
-
-### 1.2.0.0
-
-* Improve support for Credentials.
-
-### 1.1.0.0
-
-* Minor bug fixes
-
-### 1.0.0.0
-
-* Initial release with the following resources
-  * xDatabase
-  * xDBPackage
-
-## Examples
-
-### Deploy a Database using DacPac
-
-This configuration will deploy the database with the schema specified in the dacpac.
-If the db exists, the new schema will be deployed.
-
-```powershell
-configuration DacDeploy
-{
-    param
-    (
-        [Parameter(Mandatory)]
-        [ValidateNotNullOrEmpty()]
-        [String]$Ensure,
-
-        [Parameter(Mandatory)]
-        [ValidateNotNullOrEmpty()]
-        [String]$DatabaseName,
-
-        [Parameter(Mandatory)]
-        [ValidateNotNullOrEmpty()]
-        [String]$SqlServer,
-
-        [Parameter(Mandatory)]
-        [ValidateNotNullOrEmpty()]
-        [String]$SqlServerVersion,
-
-        [String]$DacPacPath,
-
-        [String]$BacPacPath,
-
-        [Parameter(Mandatory)]
-        [ValidateNotNullOrEmpty()]
-        [String]$NodeName,
-
-        [PSCredential]
-        $Credentials,
-
-        [string]$DacPacApplicationName
-
-    )
-
-    Node ‘NodeName’
-    {
-        xDatabase DeployDac
-        {
-            Ensure = $Ensure
-            SqlServer = $SqlServer
-            SqlServerVersion = $SqlServerVersion
-            DatabaseName = $DatabaseName
-            Credentials = $Credentials
-            DacPacPath =  $DacPacPath
-            DacPacApplicationName = $DacPacApplicationName
-
-        }
-
-    }
-```
-
-### Deploy Database using BACPAC
-
-This configuration will deploy the database with the schema and data specified in the bacpac
-If the database exists, no action is taken.
-
-```powershell
-configuration BacPacDeploy
-{
-    param
-    (
-        [Parameter(Mandatory)]
-        [ValidateNotNullOrEmpty()]
-        [String]$Ensure,
-
-        [Parameter(Mandatory)]
-        [ValidateNotNullOrEmpty()]
-        [String]$DatabaseName,
-
-        [Parameter(Mandatory)]
-        [ValidateNotNullOrEmpty()]
-        [String]$SqlServer,
-
-        [Parameter(Mandatory)]
-        [ValidateNotNullOrEmpty()]
-        [String]$SqlServerVersion,
-
-        [String]$DacPacPath,
-
-        [String]$BacPacPath,
-
-        [Parameter(Mandatory)]
-        [ValidateNotNullOrEmpty()]
-        [String]$NodeName,
-
-        [PSCredential]
-        $Credentials,
-
-        [string]$DacPacApplicationName
-
-    )
-
-    Node ‘NodeName’
-    {
-        xDatabase DeployBacPac
-        {
-            Ensure = $Ensure
-            SqlServer = $SqlServer
-            SqlServerVersion = $SqlServerVersion
-            DatabaseName = $DatabaseName
-            Credentials = $Credentials
-            BacPacPath = $BacPacPath
-        }
-    }
-}
-```
-
-### Deploy Database without BACPAC or DACPAC
-
-This configuration will create a database when neither a .dacpac nor a .bacpac is specified.
-
-```powershell
-configuration DbDeploy
-{
-    param
-    (
-        [Parameter(Mandatory)]
-        [ValidateNotNullOrEmpty()]
-        [String]$Ensure,
-
-        [Parameter(Mandatory)]
-        [ValidateNotNullOrEmpty()]
-        [String]$DatabaseName,
-
-        [Parameter(Mandatory)]
-        [ValidateNotNullOrEmpty()]
-        [String]$SqlServer,
-
-        [Parameter(Mandatory)]
-        [ValidateNotNullOrEmpty()]
-        [String]$SqlServerVersion,
-
-        [String]$DacPacPath,
-
-        [String]$BacPacPath,
-
-        [Parameter(Mandatory)]
-        [ValidateNotNullOrEmpty()]
-        [String]$NodeName,
-
-        [PSCredential]
-        $Credentials,
-
-        [string]$DacPacApplicationName
-
-    )
-
-    Node ‘NodeName’
-    {
-        xDatabase DeployDatabase
-
-        {
-            Ensure = $Ensure
-            SqlServer = $SqlServer
-            SqlServerVersion = $SqlServerVersion
-            DatabaseName = $DatabaseName
-            Credentials = $Credentials
-        }
-    }
-}
-```
+- **DatabaseName**: The name of the database to be deployed.
+- **SqlServer**: The SQL server.
+- **SqlServerVersion**: The version of the SQL Server.
+  This property can take the following values:
+  { 2008-R2 | 2012 | 2014 | 2016 | 2017 | 2019 }
+- **Path**: The path to the .bacpac or .dacpac file to be used to export
+  a database to a bacpac or extract a db to a dacpac respectively.
+- **Type**: This property can take the following values for dacpac extraction
+  and bacpac export: { DACPAC | BACPAC }

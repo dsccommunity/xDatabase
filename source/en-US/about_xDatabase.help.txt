@@ -1,0 +1,26 @@
+TOPIC
+    about_xDatabase
+
+SHORT DESCRIPTION
+    DSC resources for deployment using dacpac and bacpac for Microsoft SQL Server.
+
+LONG DESCRIPTION
+    This module contains DSC resources for deployment using dacpac and bacpac for
+    Microsoft SQL Server.
+
+EXAMPLES
+    PS C:\> Get-DscResource -Module xDatabase
+
+NOTE:
+    Thank you to the DSC Community contributors who contributed to this module by
+    writing code, sharing opinions, and provided feedback.
+
+TROUBLESHOOTING NOTE:
+    Go to the Github repository for read about issues, submit a new issue, and read
+    about new releases. https://github.com/dsccommunity/xDatabase
+
+SEE ALSO
+    - https://github.com/dsccommunity/xDatabase
+
+KEYWORDS
+    DSC, DscResource, SqlServer, dacpac, bacpac
