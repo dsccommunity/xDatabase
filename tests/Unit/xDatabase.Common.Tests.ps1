@@ -23,7 +23,7 @@ Import-Module $script:subModuleFile -Force -ErrorAction 'Stop'
 #endregion HEADER
 
 InModuleScope $script:subModuleName {
-    Describe 'xDatabase_Common\Get-DacPacDeployedVersion' -Tag 'Helper' {
+    Describe 'xDatabase.Common\Get-DacPacDeployedVersion' -Tag 'Helper' {
         $mockedDatabase = @(
             @{DBName = 'DBTest'; DacPacVersion = '1.0.0.0'},
             @{DBName = 'TestDB'; DacPacVersion = '1.2.0.1'}

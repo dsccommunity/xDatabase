@@ -251,7 +251,7 @@ function Get-DacPacDeployedVersion
 
     $result = ReturnSqlQuery -SqlConnection $sqlConnection -SqlQuery $dacpacQueryString
 
-    return $result.Where( {$_.DBName -eq $DBName}).DacPacVersion
+    return $result.Where( { $_.DBName -eq $DBName }).DacPacVersion
 }
 
 function Construct-ConnectionString
@@ -339,7 +339,7 @@ function Load-DacFx
 
     $dacPathSuffix = "Microsoft SQL Server\$majorVersion\DAC\bin\Microsoft.SqlServer.Dac.dll"
 
-    if(Test-Path -Path "${env:ProgramFiles(x86)}\$dacPathSuffix")
+    if (Test-Path -Path "${env:ProgramFiles(x86)}\$dacPathSuffix")
     {
         $DacFxLocation = "${env:ProgramFiles(x86)}\$dacPathSuffix"
     }
@@ -372,7 +372,7 @@ function Load-SmoAssembly
 
     $smoPathSuffix = "Microsoft SQL Server\$majorVersion\SDK\Assemblies\Microsoft.SqlServer.Smo.dll"
 
-    if(Test-Path -Path "${env:ProgramFiles(x86)}\$smoPathSuffix")
+    if (Test-Path -Path "${env:ProgramFiles(x86)}\$smoPathSuffix")
     {
         $SmoLocation = "${env:ProgramFiles(x86)}\$smoPathSuffix"
     }
